@@ -114,21 +114,21 @@ final class GoogleItem extends BaseItem {
     
     
     /**
-     * Konstruktor
-     * @param string $itemId
+     * 
+     * @param string|int $itemId
      */
-    public function __construct(string $itemId) {
+    public function __construct(string|int $itemId) {
         
         $this->itemId = $itemId;
     }
     
     /**
-     * Vraci identifikator polozky
-     * @return string|NULL
+     * Vraci itemId
+     * @return string
      */
-    public function getItemId() {
+    public function getItemId(): ?string {
         
-        return $this->itemId;
+        return (string) $this->itemId;
     }
       
 

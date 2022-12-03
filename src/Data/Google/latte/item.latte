@@ -2,8 +2,8 @@
 
 <item>
  <g:id>{$item->getItemId()}</g:id>
- <title><![CDATA[{$item->getProductName()|striptags|escapehtml}]]></title>
- <description><![CDATA[{$item->getDescription()|striptags|escapehtml}]]></description>
+ <title><![CDATA[{$item->getProductName()|striptags|escapeHtml}]]></title>
+ <description><![CDATA[{$item->getDescription()|striptags|escapeHtml}]]></description>
  <link><![CDATA[{$item->getUrl()}]]></link>
 
  {if !empty($deliveries = $item->getDeliveries())} 
@@ -16,7 +16,7 @@
     
  {if !empty($images = $item->getImages())}
   {foreach $images as $image}
-   {var tag = $iterator->first ? 'g:image_link' : 'g:additional_image_link'}
+   {var $tag = $iterator->first ? 'g:image_link' : 'g:additional_image_link'}
    <{$tag}><![CDATA[{$image->getUrl()}]]></{$tag}>
   {/foreach}
  {/if}

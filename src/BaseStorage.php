@@ -45,8 +45,9 @@ final class BaseStorage {
                 mkdir($this->getDir(), 0777, true);
             }
                         
-            if(file_put_contents($this->getFile(true, $filename), $content, LOCK_EX)) {
-                return $this->getFile(false, $filename);
+            if(file_put_contents($this->getFile($filename, true), $content, LOCK_EX)) {
+                
+                return $this->getFile($filename, false);
             }
             
             return false;
@@ -73,7 +74,7 @@ final class BaseStorage {
      * Vraci umisteni souboru
      * @return string
      */
-    public function getFile(bool $absolute = false, string $file): string {
+    public function getFile(string $file, bool $absolute = false): string {
         
         return $this->getDir($absolute) . DIRECTORY_SEPARATOR . $file;
     }

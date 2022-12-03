@@ -108,12 +108,22 @@ final class HeurekaItem extends BaseItem {
 
     
     /**
-     * Konstuktor
-     * @param string $itemId
+     *
+     * @param string|int $itemId
      */
-    public function __construct(string $itemId) {
+    public function __construct(string|int $itemId) {
         
         $this->itemId = $itemId;
+    }
+    
+    
+    /**
+     * Vraci itemId
+     * @return string
+     */
+    public function getItemId(): ?string {
+        
+        return (string) $this->itemId;
     }
 
     
@@ -265,17 +275,7 @@ final class HeurekaItem extends BaseItem {
         
         return ($this->images ?? []);
     }
-         
-
-    /**
-     * Vraci identifikator nabidky v eshopu
-     * @return string|NULL
-     */
-    public function getItemId() {
-        
-        return $this->itemId;
-    }
-
+      
     /**
      * EAN 
      * @param string $ean

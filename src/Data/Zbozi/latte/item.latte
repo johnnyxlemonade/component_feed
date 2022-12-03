@@ -1,7 +1,7 @@
 {contentType xml}
 <SHOPITEM>
-    <PRODUCTNAME>{$item->getProductName()|striptags|escapehtml}</PRODUCTNAME>
-    <DESCRIPTION><![CDATA[{$item->getDescription()|striptags|escapehtml}]]></DESCRIPTION>
+    <PRODUCTNAME>{$item->getProductName()|striptags|escapeHtml}</PRODUCTNAME>
+    <DESCRIPTION><![CDATA[{$item->getDescription()|striptags|escapeHtml}]]></DESCRIPTION>
     <URL>{$item->getUrl()}</URL>
     <PRICE_VAT>{$item->getPriceVat()}</PRICE_VAT>
     <DELIVERY_DATE n:if="$item->getDeliveryDate() !== null">{$item->getDeliveryDate()}</DELIVERY_DATE>

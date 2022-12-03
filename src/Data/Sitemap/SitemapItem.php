@@ -42,21 +42,33 @@ final class SitemapItem extends BaseItem {
      * Povolene hodnoty frekvence zmeny
      * @var array
      */
-    const CHANGE_FREQ = ["always", "hourly", "daily", "weekly", "monthly", "yearly", "never"];
+    private const CHANGE_FREQ = [
+        "always", 
+        "hourly", 
+        "daily", 
+        "weekly", 
+        "monthly", 
+        "yearly", 
+        "never"        
+    ];
     
     
-    public function __construct(string $itemId) {
+    /**
+     *
+     * @param string|int $itemId
+     */
+    public function __construct(string|int $itemId) {
         
         $this->itemId = $itemId;        
     }
-
+    
     /**
      * Vraci itemId
-     * @return string|NULL
+     * @return string
      */
-    public function getItemId() {
+    public function getItemId(): ?string {
         
-        return $this->itemId;
+        return (string) $this->itemId;
     }
     
     /**
@@ -67,6 +79,7 @@ final class SitemapItem extends BaseItem {
     public function setLoc(string $url) {
         
         $this->loc = (string) $url;
+        
         return $this;
     }
 
@@ -106,18 +119,19 @@ final class SitemapItem extends BaseItem {
     
     
     /**
-     * Nastavi prioritu polozky
-     * @param string $priority
+     * 
+     * @param string|int|float $priority
      * @return \Lemonade\Feed\Data\Sitemap\SitemapItem
-     */
-    public function setPriority(string $priority) {
+     */   
+    public function setPriority(string|int|float $priority = null) {
         
         $this->priority = (string) $priority;
+        
         return $this;
     }
     
     /**
-     * Vraci prioritu polozky
+     * 
      * @return string
      */
     public function getPriority() {
@@ -126,20 +140,23 @@ final class SitemapItem extends BaseItem {
     }
     
     /**
-     * Nastavi posledni zmenu
+     * 
      * @param \DateTime $lastMod
      * @return \Lemonade\Feed\Data\Sitemap\SitemapItem
      */
-    public function addLastMod(\DateTime $lastMod)  { 
+    public function addLastMod(\DateTime $lastMod = null)  { 
         
         $this->lastmod = $lastMod;
+        
         return $this;
     }
     
     /**
-     * Vraci posledni zmenu
+     * 
+     * @return string|NULL
      */
     public function getLastMod() {
+        
         return $this->lastmod instanceof \DateTime ? $this->lastmod->format("Y-m-d H:i:s") : $this->lastmod;
     }
     

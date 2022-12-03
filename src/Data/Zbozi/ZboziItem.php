@@ -114,10 +114,24 @@ final class ZboziItem extends BaseItem {
     protected $releaseDate;
     
     
-    public function __construct(string $itemId) {
+    /**
+     *
+     * @param string|int $itemId
+     */
+    public function __construct(string|int $itemId) {
+        
         $this->itemId = $itemId;
     }
 
+    
+    /**
+     * Vraci itemId
+     * @return string
+     */
+    public function getItemId(): ?string {
+        
+        return (string) $this->itemId;
+    }
     
 
     /**
@@ -189,7 +203,7 @@ final class ZboziItem extends BaseItem {
      * @param mixed $priceVat
      * @return \Lemonade\Feed\Data\Zbozi\ZboziItem
      */
-    public function setPriceVat($priceVat) {
+    public function setPriceVat(string|int|float $priceVat) {
         
         $this->priceVat = (float) $priceVat;
         
@@ -200,7 +214,7 @@ final class ZboziItem extends BaseItem {
      * Vraci ciselnou hodnotu nabidky
      * @return float
      */
-    public function getPriceVat() {
+    public function getPriceVat(): float {
         
         return $this->priceVat;
     }
@@ -334,14 +348,6 @@ final class ZboziItem extends BaseItem {
         return $this->releaseDate;
     }
 
-    /**
-     * Vraci identifikator nabidky v eshopu
-     * @return string|NULL
-     */
-    public function getItemId() {
-        
-        return $this->itemId;
-    }
 
     /**
      * EAN 
