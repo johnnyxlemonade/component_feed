@@ -1,0 +1,24 @@
+{
+ "name": "lemonade/component_feed",
+ "license": "MIT",
+ "authors": [
+   {
+    "name": "Honza Mudrak",
+    "email": "honza@core1.agency",
+    "homepage": "https://core1.agency"
+   }
+ ],        
+ "autoload": { 
+   "psr-4": {
+     "Lemonade\\Feed\\": "src/"
+   }
+ }, 
+ "require": {
+   "php": ">=7.2 <8.3",
+   "latte/latte": "^3.0"   
+ }
+}
+
+
+
+

@@ -1,0 +1,41 @@
+{contentType xml}
+
+<item>
+ <g:id>{$item->getItemId()}</g:id>
+ <title><![CDATA[{$item->getProductName()|striptags|escapehtml}]]></title>
+ <description><![CDATA[{$item->getDescription()|striptags|escapehtml}]]></description>
+ <link><![CDATA[{$item->getUrl()}]]></link>
+
+ {if !empty($deliveries = $item->getDeliveries())} 
+  <g:shipping n:foreach="$deliveries as $delivery"> 
+   <g:country>{$delivery->getCountry()}</g:country>
+   <g:service>{$delivery->getService()}</g:service>
+   <g:price>{$delivery->getPrice()} {$delivery->getCurrency()}</g:price>
+  </g:shipping>
+ {/if}
+    
+ {if !empty($images = $item->getImages())}
+  {foreach $images as $image}
+   {var tag = $iterator->first ? 'g:image_link' : 'g:additional_image_link'}
+   <{$tag}><![CDATA[{$image->getUrl()}]]></{$tag}>
+  {/foreach}
+ {/if}
+
+ <g:condition n:if="$item->getCondition()">{$item->getCondition()}</g:condition>
+ <g:availability n:if="$item->getAvailability()">{$item->getAvailability()}</g:availability>
+ <g:price>{$item->getPrice()} {$item->getCurrency()}</g:price>  
+ <g:sale_price n:if="$item->getSalePrice()">{$item->getSalePrice()}</g:sale_price>
+ <g:identifier_exists>{$item->isIdentifierExists() ? 'TRUE' : 'FALSE'}</g:identifier_exists>
+ <g:gtin n:if="$item->getGtin()">{$item->getGtin()}</g:gtin> 
+ <g:mpn n:if="$item->getMpn()">{$item->getMpn()|substr:1,70}</g:mpn>
+ <g:brand n:if="$item->getBrand()">{$item->getBrand()|substr:1,70}</g:brand>     
+
+ {if !empty($productTypes = $item->getProductTypes())}
+  <g:product_type n:foreach="$productTypes as $productType" n:if="!empty($productType->getText())">{$productType->getText()}</g:product_type>
+ {/if}
+
+ <g:availability_date n:if="$item->getAvailabilityDate()">{$item->getAvailabilityDate()}</g:availability_date>
+ <g:google_product_category n:if="$item->getGoogleProductCategory()">{$item->getGoogleProductCategory()}</g:google_product_category>
+ <g:item_group_id n:if="$item->getItemGroupId()">{$item->getItemGroupId()}</g:item_group_id>
+    
+</item>

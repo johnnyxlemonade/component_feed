@@ -1,0 +1,45 @@
+{contentType xml}
+<SHOPITEM>
+   
+   <PRODUCTNAME>{$item->getProductName()|striptags|escapehtml}</PRODUCTNAME>
+   <DESCRIPTION><![CDATA[{$item->getDescription()|striptags|escapehtml}]]></DESCRIPTION>
+   <URL>{$item->getUrl()}</URL>
+   <PRICE_VAT>{$item->getPriceVat()}</PRICE_VAT>
+   <DELIVERY_DATE n:if="$item->getDeliveryDate() !== null">{$item->getDeliveryDate()}</DELIVERY_DATE>
+    
+   {if !empty($deliveries = $item->getDeliveries())} 
+   <DELIVERY n:foreach="$deliveries as $delivery"> 
+    <DELIVERY_ID>{$delivery->getId()}</DELIVERY_ID>
+    <DELIVERY_PRICE>{$delivery->getPrice()}</DELIVERY_PRICE>
+    <DELIVERY_PRICE_COD n:if="$delivery->getPriceCod()">{$delivery->getPriceCod()}</DELIVERY_PRICE_COD>
+   </DELIVERY>
+   {/if}
+
+   <ITEM_ID n:if="$item->getItemId()">{$item->getItemId()}</ITEM_ID>
+
+   {if !empty($images = $item->getImages())}
+    {foreach $images as $image}
+     {var tag = $iterator->first ? 'IMGURL' : 'IMGURL_ALTERNATIVE'}
+     <{$tag}>{$image->getUrl()}</{$tag}>
+    {/foreach}
+   {/if}    
+
+   <EAN n:if="$item->getEan()">{$item->getEan()}</EAN>
+   <ISBN n:if="$item->getIsbn()">{$item->getIsbn()}</ISBN>
+   <ITEMGROUP_ID n:if="$item->getItemGroupId()">{$item->getItemGroupId()}</ITEMGROUP_ID>
+   <MANUFACTURER n:if="$item->getManufacturer()">{$item->getManufacturer()}</MANUFACTURER>
+
+   {if !empty($categoryTexts = $item->getCategoryTexts())}
+     <CATEGORYTEXT n:foreach="$categoryTexts as $categoryText" n:if="!empty($categoryText->getText())">{$categoryText->getText()}</CATEGORYTEXT>
+   {/if}
+
+   {*<ITEM_TYPE n:if="$item->type">{$item->type}</ITEM_TYPE>*}
+    
+   {if !empty($parameters = $item->getParameters())}
+    <PARAM n:foreach="$parameters as $parameter">
+     <PARAM_NAME>{$parameter->getName()}</PARAM_NAME>
+     <VAL>{$parameter->getValue()}</VAL>
+    </PARAM>
+   {/if}
+
+</SHOPITEM>

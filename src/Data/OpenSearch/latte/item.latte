@@ -1,0 +1,14 @@
+{contentType xml}
+
+ <ShortName>{$item->getShortName()}</ShortName>
+ <LongName>{$item->getLongName()}</LongName>
+ <Description>{$item->getDescription()}</Description>		
+ <Contact>{$item->getContact()}</Contact>
+  
+ <Url type="text/html" method="GET" template="{$item->getUrl()}"></Url>
+ 
+ <AdultContent>false</AdultContent>
+ <Language>cs-CZ</Language>
+ <OutputEncoding>{$item->getOutputEncoding()}</OutputEncoding>
+ <InputEncoding>{$item->getInputEncoding()}</InputEncoding>  
+	

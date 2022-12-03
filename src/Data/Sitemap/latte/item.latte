@@ -1,0 +1,8 @@
+{contentType xml}
+
+<url>	
+ <loc>{$item->getLoc()}</loc>	
+ <lastmod n:if="$item->getLastMod()">{$item->getLastMod()|date:'c'}</lastmod>
+ <changefreq>{$item->getChangeFreq()}</changefreq>
+ <priority n:if="$item->getPriority()">{$item->getPriority()}</priority>
+</url>
