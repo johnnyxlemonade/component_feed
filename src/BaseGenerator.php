@@ -49,6 +49,7 @@ abstract class BaseGenerator implements GeneratorInterface {
      * @var string
      */
     private $appName;
+
     
     /**
      * BaseGenerator constructor
@@ -56,7 +57,7 @@ abstract class BaseGenerator implements GeneratorInterface {
      * @param string $dataHost
      * @param string $appName
      */
-    public function __construct(BaseStorage $storage, string $appHost = null, string $appName = null) {
+    public function __construct(BaseStorage $storage, string $appHost = null, string $appName = null, protected readonly Engine $engine = new Engine()) {
         
         $this->storage = $storage;
         $this->appHost = (string) $appHost;
@@ -68,7 +69,9 @@ abstract class BaseGenerator implements GeneratorInterface {
      * Hostitel
      * @return string
      */
-    public function getAppHost(): string {
+    public function getAppHost(): string
+    {
+
         return ($this->appHost ?? $_SERVER["HTTP_HOST"] ?? "local");
     }
     
@@ -76,7 +79,9 @@ abstract class BaseGenerator implements GeneratorInterface {
      * Nazev
      * @return string
      */
-    public function getAppName(): string {
+    public function getAppName(): string
+    {
+
         return ($this->appName ?? "");
     }
 
@@ -140,7 +145,9 @@ abstract class BaseGenerator implements GeneratorInterface {
      * Vraci typ sablony
      * @return string
      */
-    protected function getExtension() {
+    protected function getExtension(): string
+    {
+
         return $this->fileExtension;
     }
     
@@ -203,17 +210,20 @@ abstract class BaseGenerator implements GeneratorInterface {
      * @see \Lemonade\Feed\GeneratorInterface::addItem()
      */
     public function addItem(ItemInterface $item) {
-        
+
+
         if (!$this->prepared) {
+
             $this->prepareTmpFile();
         }
-        
+
         if ($item->validate()) {
-            
-            $latte = new Engine;
-            $xmlItem = $latte->renderToString($this->getTemplate("item"), ["item" => $item]);
-            
+
+            $xmlItem = $this->engine->renderToString($this->getTemplate("item"), ["item" => $item]);
+
             fwrite($this->handle, $xmlItem);
+
+            unset($xmlItem);
         }
     }
     
