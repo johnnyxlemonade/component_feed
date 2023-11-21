@@ -25,6 +25,16 @@ final class OrderHeader extends BaseItem
     ];
 
     /**
+     * Moje firlmy
+     * @var array|null[]
+     */
+    protected array $supplierAddress = [
+        "data" => null,
+        "country" => null,
+        "company" => null,
+    ];
+
+    /**
      * Adresy
      * @var array|null[]
      */
@@ -132,7 +142,21 @@ final class OrderHeader extends BaseItem
      * @param AddressCompany|null $company
      * @return void
      */
-    public function setConnectionAddress(?Address $address = null, ?AddressCountry $country = null, ?AddressCompany $company = null): void
+    public function addSupplier(?Address $address = null, ?AddressCountry $country = null, ?AddressCompany $company = null): void
+    {
+
+        $this->supplierAddress["data"]    = $address;
+        $this->supplierAddress["country"] = $country;
+        $this->supplierAddress["company"] = $company;
+    }
+
+    /**
+     * @param Address|null $address
+     * @param AddressCountry|null $country
+     * @param AddressCompany|null $company
+     * @return void
+     */
+    public function addConnection(?Address $address = null, ?AddressCountry $country = null, ?AddressCompany $company = null): void
     {
 
         $this->connectionAddress["data"]    = $address;
@@ -146,7 +170,7 @@ final class OrderHeader extends BaseItem
      * @param AddressCompany|null $company
      * @return void
      */
-    public function setBillingAddress(?Address $address = null, ?AddressCountry $country = null, ?AddressCompany $company = null): void
+    public function addBilling(?Address $address = null, ?AddressCountry $country = null, ?AddressCompany $company = null): void
     {
 
         $this->billingAddress["data"]    = $address;
@@ -160,7 +184,7 @@ final class OrderHeader extends BaseItem
      * @param AddressCompany|null $company
      * @return void
      */
-    public function setDeliveryAddress(?Address $address = null, ?AddressCountry $country = null, ?AddressCompany $company = null): void
+    public function addDelivery(?Address $address = null, ?AddressCountry $country = null, ?AddressCompany $company = null): void
     {
 
         $this->deliveryAddress["data"]    = $address;
@@ -172,7 +196,7 @@ final class OrderHeader extends BaseItem
      * @param OrderShipping|null $shipping
      * @return void
      */
-    public function setShipping(?OrderShipping $shipping = null): void
+    public function addShipping(?OrderShipping $shipping = null): void
     {
 
         $this->shipping = $shipping;
@@ -182,7 +206,7 @@ final class OrderHeader extends BaseItem
      * @param OrderPayment|null $payment
      * @return void
      */
-    public function setPayment(?OrderPayment $payment = null): void
+    public function addPayment(?OrderPayment $payment = null): void
     {
 
         $this->payment = $payment;
@@ -192,7 +216,7 @@ final class OrderHeader extends BaseItem
      * @param OrderCurrency|null $currency
      * @return void
      */
-    public function setCurrency(?OrderCurrency $currency = null): void
+    public function addCurrency(?OrderCurrency $currency = null): void
     {
 
         $this->currency = $currency;
@@ -202,7 +226,7 @@ final class OrderHeader extends BaseItem
      * @param OrderGroup|null $group
      * @return void
      */
-    public function setGroup(?OrderGroup $group = null): void
+    public function addGroup(?OrderGroup $group = null): void
     {
 
         $this->group = $group;
@@ -216,6 +240,32 @@ final class OrderHeader extends BaseItem
     {
 
         $this->items[] = $item;
+    }
+
+    /**
+     * @return Address
+     */
+    public function getSupplierAddress(): Address
+    {
+        return ($this->supplierAddress["data"] ?: new Address());
+    }
+
+    /**
+     * @return AddressCountry
+     */
+    public function getSupplierCountry(): AddressCountry
+    {
+
+        return ($this->supplierAddress["country"] ?: new AddressCountry());
+    }
+
+    /**
+     * @return AddressCompany
+     */
+    public function getSupplierCompany(): AddressCompany
+    {
+
+        return ($this->supplierAddress["company"] ?: new AddressCompany());
     }
 
     /**

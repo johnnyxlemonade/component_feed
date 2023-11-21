@@ -1,6 +1,6 @@
 {contentType xml}
 <ObjednavkaPrijata>
-    <Group ID="{$item->getGroup()->getId()}" Kod="{$item->getGroup()->getCode()}"/>
+    <Group Kod="{$item->getGroup()->getCode()}"/>
     <CelkovaCastka>{$item->getSummary()->getTotal()["rootPrice"]|noescape}</CelkovaCastka>
     <CelkovaCastkaCM>{$item->getSummary()->getTotal()["rootPrice"]|noescape}</CelkovaCastkaCM>
     <DatumSchvaleni>{$item->getDatumSchvaleni()}</DatumSchvaleni>
@@ -15,60 +15,88 @@
     <Vystavil>{$item->getVystavil()}</Vystavil>
     <Adresa>
         <KontaktniOsobaJmeno>{$item->getConnetionAddress()->getName()}</KontaktniOsobaJmeno>
-        <KontaktniOsobaNazev>{$item->getConnetionAddress()->getCompany()}</KontaktniOsobaNazev>
+        <KontaktniOsobaNazev>{$item->getConnetionAddress()->getTitle()}</KontaktniOsobaNazev>
         <KontaktniOsobaPrijmeni>{$item->getConnetionAddress()->getSurname()}</KontaktniOsobaPrijmeni>
         <Misto>{$item->getConnetionAddress()->getCity()}</Misto>
-        <Nazev>{$item->getConnetionAddress()->getTitle()}</Nazev>
+        <Nazev>{$item->getConnetionAddress()->getCompany()}</Nazev>
         <PSC>{$item->getConnetionAddress()->getZip()}</PSC>
         <Stat>{$item->getConnetionAddress()->getCountry()}</Stat>
         <Ulice>{$item->getConnetionAddress()->getStreet()}</Ulice>
-        <AdresaStat ObjectName="Stat" ObjectType="Object" ID="{$item->getConnetionCountry()->getId()}">
+        <AdresaStat>
             <Kod>{$item->getConnetionCountry()->getCode()}</Kod>
         </AdresaStat>
-        <Firma ObjectName="Firma" ObjectType="Object" ID="{$item->getConnetionCompany()->getId()}">
-            <DIC>{$item->getConnetionCompany()->getVat()}</DIC>
-            <ICO>{$item->getConnetionCompany()->getVatId()}</ICO>
-            {if (empty($item->getConnetionCompany()->getVat()))}
-                <EXPORT_ADRESAR_UserData>False</EXPORT_ADRESAR_UserData>
-            {/if}
+        <Firma>
+            <ICO>{$item->getConnetionCompany()->getVat()}</ICO>
+            <DIC>{$item->getConnetionCompany()->getVatId()}</DIC>
+            <ParametryProdejny>
+                <ProdejNaDLZakazan>False</ProdejNaDLZakazan>
+            </ParametryProdejny>
+            <SeznamSpojeni>
+                <Spojeni>
+                    <Popis></Popis>
+                    <Poradi>1</Poradi>
+                    <SpojeniCislo>{$item->getConnetionAddress()->getEmail()}</SpojeniCislo>
+                    <SpojeniKlapka></SpojeniKlapka>
+                    <SpojeniMistniPredvolba></SpojeniMistniPredvolba>
+                    <Vychozi>True</Vychozi>
+                    <TypSpojeni>
+                        <Kod>E-mail</Kod>
+                        <Nazev>E-mail</Nazev>
+                    </TypSpojeni>
+                </Spojeni>
+            </SeznamSpojeni>
         </Firma>
     </Adresa>
     <AdresaKoncovehoPrijemce>
-        <Email>{$item->getBillingAddress()->getEmail()}</Email>
-        <Telefon>{$item->getBillingAddress()->getPhone()}</Telefon>
-        <KontaktniOsobaJmeno>{$item->getBillingAddress()->getName()}</KontaktniOsobaJmeno>
-        <KontaktniOsobaNazev>{$item->getBillingAddress()->getCompany()}</KontaktniOsobaNazev>
-        <KontaktniOsobaPrijmeni>{$item->getBillingAddress()->getSurname()}</KontaktniOsobaPrijmeni>
-        <Misto>{$item->getBillingAddress()->getCity()}</Misto>
-        <Nazev>{$item->getBillingAddress()->getTitle()}</Nazev>
-        <PSC>{$item->getBillingAddress()->getZip()}</PSC>
-        <Stat>{$item->getBillingAddress()->getCountry()}</Stat>
-        <Ulice>{$item->getBillingAddress()->getStreet()}</Ulice>
-        <AdresaStat ObjectName="Stat" ObjectType="Object" ID="{$item->getBillingCountry()->getId()}">
-            <Kod>{$item->getBillingCountry()->getCode()}</Kod>
+        <Email>{$item->getDeliveryAddress()->getEmail()}</Email>
+        <KontaktniOsobaNazev>{$item->getDeliveryAddress()->getName()}</KontaktniOsobaNazev>
+        <Misto>{$item->getDeliveryAddress()->getCity()}</Misto>
+        <Nazev>{$item->getDeliveryAddress()->getCompany()}</Nazev>
+        <PSC>{$item->getDeliveryAddress()->getZip()}</PSC>
+        <Stat>{$item->getDeliveryAddress()->getCountry()}</Stat>
+        <Telefon>{$item->getDeliveryAddress()->getPhone()}</Telefon>
+        <Ulice>{$item->getDeliveryAddress()->getStreet()}</Ulice>
+        <AdresaStat>
+            <Kod>{$item->getDeliveryAddress()->getCode()}</Kod>
         </AdresaStat>
-        <Firma ObjectName="Firma" ObjectType="Object" ID="{$item->getBillingCompany()->getId()}">
-            <DIC>{$item->getBillingCompany()->getVat()}</DIC>
-            <ICO>{$item->getBillingCompany()->getVatId()}</ICO>
+        <Firma>
+            <ICO>{$item->getDeliveryAddress()->getVat()}</ICO>
+            <DIC>{$item->getDeliveryAddress()->getVatId()}</DIC>
+            <ParametryProdejny>
+                <ProdejNaDLZakazan>False</ProdejNaDLZakazan>
+            </ParametryProdejny>
         </Firma>
     </AdresaKoncovehoPrijemce>
     <AdresaPrijemceFaktury>
-        <KontaktniOsobaJmeno>{$item->getBillingAddress()->getName()}</KontaktniOsobaJmeno>
-        <KontaktniOsobaNazev>{$item->getBillingAddress()->getCompany()}</KontaktniOsobaNazev>
-        <KontaktniOsobaPrijmeni>{$item->getBillingAddress()->getSurname()}</KontaktniOsobaPrijmeni>
+        <KontaktniOsobaNazev>{$item->getBillingAddress()->getName()}</KontaktniOsobaNazev>
         <Misto>{$item->getBillingAddress()->getCity()}</Misto>
         <Nazev>{$item->getBillingAddress()->getTitle()}</Nazev>
         <PSC>{$item->getBillingAddress()->getZip()}</PSC>
         <Stat>{$item->getBillingAddress()->getCountry()}</Stat>
         <Ulice>{$item->getBillingAddress()->getStreet()}</Ulice>
-        <AdresaStat ObjectName="Stat" ObjectType="Object" ID="{$item->getBillingCountry()->getId()}">
+        <AdresaStat>
             <Kod>{$item->getBillingCountry()->getCode()}</Kod>
         </AdresaStat>
-        <Firma ObjectName="Firma" ObjectType="Object" ID="{$item->getBillingCompany()->getId()}">
-            <DIC>{$item->getBillingCompany()->getVat()}</DIC>
-            <ICO>{$item->getBillingCompany()->getVatId()}</ICO>
+        <Firma>
+            <ICO>{$item->getBillingCompany()->getVat()}</ICO>
+            <DIC>{$item->getBillingCompany()->getVatId()}</DIC>
         </Firma>
     </AdresaPrijemceFaktury>
+    <MojeFirma>
+        <IC>{$item->getSupplierCompany()->getVat()}</IC>
+        <DIC>{$item->getSupplierCompany()->getVatId()}</DIC>
+        <Misto>{$item->getSupplierAddress()->getCity()}</Misto>
+        <Nazev>{$item->getSupplierAddress()->getCompany()}</Nazev>
+        <PSC>{$item->getSupplierAddress()->getZip()}</PSC>
+        <Stat>{$item->getSupplierAddress()->getCountry()}</Stat>
+        <Ulice>{$item->getSupplierAddress()->getStreet()}</Ulice>
+        <Firma>
+            <ICO>{$item->getSupplierCompany()->getVat()}</ICO>
+        </Firma>
+        <MojeFirmaStat>
+            <Kod>{$item->getSupplierCountry()->getCode()}</Kod>
+        </MojeFirmaStat>
+    </MojeFirma>
 
     {foreach $item->getSummary()->getLines() as $val}
         <DPH{$val["index"]|noescape}>
@@ -90,22 +118,25 @@
         <Zaklad>{$item->getSummary()->getTotal()["rootBase"]|noescape}</Zaklad>
         <ZakladCM>{$item->getSummary()->getTotal()["rootBase"]|noescape}</ZakladCM>
     </Suma>
-
-    <DomaciMena ObjectName="Mena" ObjectType="Object" ID="{$item->getCurrency()->getId()}">
+    <UcetniKurz>
+        <Kurz>1.000000</Kurz>
+        <Mnozstvi>1.000000</Mnozstvi>
+    </UcetniKurz>
+    <DomaciMena>
         <Kod>{$item->getCurrency()->getCode()}</Kod>
     </DomaciMena>
-    <Mena ObjectName="Mena" ObjectType="Object" ID="{$item->getCurrency()->getId()}">
+    <Mena>
         <Kod>{$item->getCurrency()->getCode()}</Kod>
     </Mena>
-    <ZpusobDopravy ObjectName="ZpusobDopravy" ObjectType="Object" ID="{$item->getShipping()->getId()}">
+    <ZpusobDopravy>
         <Kod>{$item->getShipping()->getCode()}</Kod>
     </ZpusobDopravy>
-    <ZpusobPlatby ObjectName="ZpusobPlatby" ObjectType="Object" ID="{$item->getPayment()->getCode()}">
+    <ZpusobPlatby>
         <Kod>{$item->getPayment()->getCode()}</Kod>
     </ZpusobPlatby>
-    <Polozky ObjectName="PolozkaObjednavkyPrijate" ObjectType="List">
+    <Polozky>
         {if (!empty($orderProduct = $item->getItems()))}
-        <PolozkaObjednavkyPrijate ObjectName="PolozkaObjednavkyPrijate" ObjectType="Object" n:foreach="$orderProduct as $key => $product">
+        <PolozkaObjednavkyPrijate n:foreach="$orderProduct as $key => $product">
             <CelkovaCena>{$product->getRootBase()}</CelkovaCena>
             <CelkovaCenaBezSlevy>{$product->getRootBase()}</CelkovaCenaBezSlevy>
             <CelkovaCenaBezSlevyCM>{$product->getRootBase()}</CelkovaCenaBezSlevyCM>
@@ -132,15 +163,16 @@
                 <Zaklad>{$product->getRootBase()}</Zaklad>
                 <ZakladCM>{$product->getRootBase()}</ZakladCM>
             </DPH>
-            <ObsahPolozky ObjectName="ObsahPolozkySArtiklem" ObjectType="Object" ID="{$product->getItemId()}">
-                <Artikl ObjectName="Artikl" ObjectType="Object">
+            <ObsahPolozky>
+                <Artikl>
+                    <Katalog>{$product->getItemProductCatalog()}</Katalog>
                     <Kod>{$product->getItemProductCode()}</Kod>
                 </Artikl>
             </ObsahPolozky>
-            <SazbaDPH ObjectName="SazbaDPH" ObjectType="Object" ID="{$product->getTaxMoneyId()}">
+            <SazbaDPH>
                 <DruhSazby EnumValueName="{$product->getTaxMoneyType()}">{$product->getTaxMoneyNumber()}</DruhSazby>
                 <Sazba>{$product->getVatRate()}</Sazba>
-                <Stat ObjectName="Stat" ObjectType="Object" ID="{$product->getTaxCountryId()}">
+                <Stat>
                     <Kod>{$product->getTaxCountryCode()}</Kod>
                 </Stat>
             </SazbaDPH>
