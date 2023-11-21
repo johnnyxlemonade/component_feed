@@ -37,7 +37,7 @@ final class OrderGenerator extends BaseGenerator
      */
     protected function getErrorString() {
         
-        return \str_replace(["{name}", "{url}"], [$this->getAppName(), $this->getAppHost()], Orderheader::getErrorString());
+        return \str_replace(["{name}", "{url}"], [$this->getAppName(), $this->getAppHost()], OrderHeader::getErrorString());
     }
     
 }
