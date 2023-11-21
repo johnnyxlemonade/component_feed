@@ -13,7 +13,7 @@ abstract class BaseItem implements ItemInterface {
 	 * @return bool
      */
 	public function validate() {
-	    
+
 	    $reflex = (new \ReflectionObject($this));
 	    
 	    foreach ($reflex->getProperties(\ReflectionProperty::IS_PUBLIC) as $v) {

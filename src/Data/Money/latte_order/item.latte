@@ -58,8 +58,8 @@
         <PSC>{$item->getBillingAddress()->getZip()}</PSC>
         <Stat>{$item->getBillingAddress()->getCountry()}</Stat>
         <Ulice>{$item->getBillingAddress()->getStreet()}</Ulice>
-        <AdresaStat ObjectName="Stat" ObjectType="Object" ID="{$item->getBillingAddress()->getId()}">
-            <Kod>{$item->getBillingAddress()->getCode()}</Kod>
+        <AdresaStat ObjectName="Stat" ObjectType="Object" ID="{$item->getBillingCountry()->getId()}">
+            <Kod>{$item->getBillingCountry()->getCode()}</Kod>
         </AdresaStat>
         <Firma ObjectName="Firma" ObjectType="Object" ID="{$item->getBillingCompany()->getId()}">
             <DIC>{$item->getBillingCompany()->getVat()}</DIC>
