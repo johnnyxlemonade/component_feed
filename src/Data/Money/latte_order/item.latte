@@ -28,6 +28,9 @@
         <Firma ObjectName="Firma" ObjectType="Object" ID="{$item->getConnetionCompany()->getId()}">
             <DIC>{$item->getConnetionCompany()->getVat()}</DIC>
             <ICO>{$item->getConnetionCompany()->getVatId()}</ICO>
+            {if (empty($item->getConnetionCompany()->getVat()))}
+                <EXPORT_ADRESAR_UserData>False</EXPORT_ADRESAR_UserData>
+            {/if}
         </Firma>
     </Adresa>
     <AdresaKoncovehoPrijemce>
