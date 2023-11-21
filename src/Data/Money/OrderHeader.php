@@ -85,6 +85,13 @@ final class OrderHeader extends BaseItem
     protected array $items = [];
 
     /**
+     * DPH sazby
+     * @var array
+     */
+    protected array $dphRates = [];
+
+
+    /**
      * @param string|int $orderId
      */
     public function __construct(protected readonly string|int $orderId) {}

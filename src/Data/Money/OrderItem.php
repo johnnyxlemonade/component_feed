@@ -18,6 +18,11 @@ namespace Lemonade\Feed\Data\Money;
  * @method getUnitPrice
  * @method getVatBase
  * @method getVatRate
+ * @method getTaxMoneyId
+ * @method getTaxMoneyType
+ * @method getTaxMoneyNumber
+ * @method getTaxCountryId
+ * @method getTaxCountryCode
  */
 final class OrderItem
 {

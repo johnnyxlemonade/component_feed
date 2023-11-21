@@ -134,10 +134,11 @@
                     <Kod>{$product->getItemProductCode()}</Kod>
                 </Artikl>
             </ObsahPolozky>
-            <SazbaDPH>
+            <SazbaDPH ObjectName="SazbaDPH" ObjectType="Object" ID="{$product->getTaxMoneyId()}">
+                <DruhSazby EnumValueName="{$product->getTaxMoneyType()}">{$product->getTaxMoneyNumber()}</DruhSazby>
                 <Sazba>{$product->getVatRate()}</Sazba>
-                <Stat>
-                    <Kod>CZ</Kod>
+                <Stat ObjectName="Stat" ObjectType="Object" ID="{$product->getTaxCountryId()}">
+                    <Kod>{$product->getTaxCountryCode()}</Kod>
                 </Stat>
             </SazbaDPH>
         </PolozkaObjednavkyPrijate>
