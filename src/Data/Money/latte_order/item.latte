@@ -57,7 +57,7 @@
         <Telefon>{$item->getDeliveryAddress()->getPhone()}</Telefon>
         <Ulice>{$item->getDeliveryAddress()->getStreet()}</Ulice>
         <AdresaStat>
-            <Kod>{$item->getDeliveryAddress()->getCode()}</Kod>
+            <Kod>{$item->getDeliveryCountry()->getCode()}</Kod>
         </AdresaStat>
         <Firma>
             <ICO>{$item->getDeliveryAddress()->getVat()}</ICO>
