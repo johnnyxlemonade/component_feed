@@ -17,6 +17,7 @@ final class OrderHeader extends BaseItem
     protected array $config = [
         "DatumSchvaleni" => "",
         "DatumVystaveni" => "",
+        "CisloDokladu" => "",
         "VariabilniSymbol" => "",
         "Nazev" => "",
         "Sleva" => "",
@@ -127,6 +128,16 @@ final class OrderHeader extends BaseItem
         $this->config["Nazev"] = sprintf("Objednávka z eshopu č. %s", $vs);
     }
 
+
+    /**
+     * @param string $catalog
+     * @return void
+     */
+    public function setCatalog(string $catalog): void
+    {
+        $this->config["CisloDokladu"] = $catalog;
+    }
+
     /**
      * @param string|null $note
      * @return void
@@ -135,6 +146,7 @@ final class OrderHeader extends BaseItem
     {
         $this->_setItem(index: "Poznamka", value: $note);
     }
+
 
     /**
      * @param Address|null $address
@@ -409,6 +421,14 @@ final class OrderHeader extends BaseItem
     public function getDatumSchvaleni(): string
     {
         return $this->_getItem(index: "DatumSchvaleni");
+    }
+
+    /**
+     * @return string
+     */
+    public function getCisloDokladu(): string
+    {
+        return $this->_getItem(index: "CisloDokladu");
     }
 
     /**
