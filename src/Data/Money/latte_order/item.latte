@@ -1,6 +1,5 @@
 {contentType xml}
 <ObjednavkaPrijata>
-    <Group Kod="{$item->getGroup()->getCode()}"/>
     <CelkovaCastka>{$item->getSummary()->getTotal()["rootPrice"]|noescape}</CelkovaCastka>
     <CelkovaCastkaCM>{$item->getSummary()->getTotal()["rootPrice"]|noescape}</CelkovaCastkaCM>
     <DatumSchvaleni>{$item->getDatumSchvaleni()}</DatumSchvaleni>
@@ -141,7 +140,6 @@
             <CelkovaCenaBezSlevy>{$product->getRootBase()}</CelkovaCenaBezSlevy>
             <CelkovaCenaBezSlevyCM>{$product->getRootBase()}</CelkovaCenaBezSlevyCM>
             <CelkovaCenaCM>{$product->getRootBase()}</CelkovaCenaCM>
-            <ExistujePoznamka>False</ExistujePoznamka>
             <JednCena>{$product->getUnitBase()}</JednCena>
             <JednCenaCM>{$product->getUnitBase()}</JednCenaCM>
             <Jednotka>ks</Jednotka>
