@@ -21,18 +21,26 @@ trait TraitArray
     /**
      * @param string $name
      * @param mixed $arguments
-     * @return string
+     * @return bool|string
      */
-    public function __call(string $name, mixed $arguments): string
+    public function __call(string $name, mixed $arguments): bool|string
     {
 
-        if (str_starts_with($name, "get")) {
+        if (str_starts_with(haystack: $name, needle: "get")) {
 
             $index = lcfirst(string: substr(string: $name, offset: 3));
 
             return (string) ($this->data[$index] ?? "");
         }
 
+        if (str_starts_with(haystack: $name, needle: "generate")) {
+
+            $index = lcfirst(string: substr(string: $name, offset: 8));
+
+            return (bool) (((int) $this->data[$index] ?? 0) === 1);
+        }
+
         return "";
     }
+
 }

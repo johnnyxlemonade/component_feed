@@ -23,9 +23,11 @@ namespace Lemonade\Feed\Data\Money;
  * @method getTaxMoneyNumber
  * @method getTaxCountryId
  * @method getTaxCountryCode
+ * @method generateItemGenerateContent
  */
 final class OrderItem
 {
 
     use TraitArray;
+
 }

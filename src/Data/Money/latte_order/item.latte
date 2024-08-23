@@ -1,5 +1,8 @@
 {contentType xml}
 <ObjednavkaPrijata>
+    {if (!empty($orderGroupCode = $item->getGroup()->getCode()))}
+    <Group Kod="{$orderGroupCode}"/>
+    {/if}
     <CelkovaCastka>{$item->getSummary()->getTotal()["rootPrice"]|noescape}</CelkovaCastka>
     <CelkovaCastkaCM>{$item->getSummary()->getTotal()["rootPrice"]|noescape}</CelkovaCastkaCM>
     <DatumSchvaleni>{$item->getDatumSchvaleni()}</DatumSchvaleni>
@@ -135,46 +138,48 @@
     </ZpusobPlatby>
     <Polozky>
         {if (!empty($orderProduct = $item->getItems()))}
-        <PolozkaObjednavkyPrijate n:foreach="$orderProduct as $key => $product">
-            <CelkovaCena>{$product->getRootBase()}</CelkovaCena>
-            <CelkovaCenaBezSlevy>{$product->getRootBase()}</CelkovaCenaBezSlevy>
-            <CelkovaCenaBezSlevyCM>{$product->getRootBase()}</CelkovaCenaBezSlevyCM>
-            <CelkovaCenaCM>{$product->getRootBase()}</CelkovaCenaCM>
-            <JednCena>{$product->getUnitBase()}</JednCena>
-            <JednCenaCM>{$product->getUnitBase()}</JednCenaCM>
-            <Jednotka>ks</Jednotka>
-            <JednotkovaCenaBezSlevy>{$product->getUnitBase()}</JednotkovaCenaBezSlevy>
-            <JednotkovaCenaBezSlevyCM>{$product->getUnitBase()}</JednotkovaCenaBezSlevyCM>
-            <Katalog>{$product->getItemProductCatalog()}</Katalog>
-            <Mnozstvi>{$product->getItemQuantity()}</Mnozstvi>
-            <Nazev>{$product->getItemName()}</Nazev>
-            <Poradi>{$product->getItemProductPosition()}</Poradi>
-            <Sleva>0.00</Sleva>
-            <TypCeny EnumValueName="BezDane">0</TypCeny>
-            <TypObsahu EnumValueName="SObsahem">1</TypObsahu>
-            <DPH>
-                <Celkem>{$product->getRootPrice()}</Celkem>
-                <CelkemCM>{$product->getRootPrice()}</CelkemCM>
-                <Dan>{$product->getVatBase()}</Dan>
-                <DanCM>{$product->getVatBase()}</DanCM>
-                <Sazba>{$product->getVatRate()}</Sazba>
-                <Zaklad>{$product->getRootBase()}</Zaklad>
-                <ZakladCM>{$product->getRootBase()}</ZakladCM>
-            </DPH>
-            <ObsahPolozky>
-                <Artikl>
+            {foreach $orderProduct as $key => $product}
+                <PolozkaObjednavkyPrijate {if ($product->generateItemGenerateContent())} GENERATESUBITEMS="1" {/if}>
+                    <CelkovaCena>{$product->getRootBase()}</CelkovaCena>
+                    <CelkovaCenaBezSlevy>{$product->getRootBase()}</CelkovaCenaBezSlevy>
+                    <CelkovaCenaBezSlevyCM>{$product->getRootBase()}</CelkovaCenaBezSlevyCM>
+                    <CelkovaCenaCM>{$product->getRootBase()}</CelkovaCenaCM>
+                    <JednCena>{$product->getUnitBase()}</JednCena>
+                    <JednCenaCM>{$product->getUnitBase()}</JednCenaCM>
+                    <Jednotka>ks</Jednotka>
+                    <JednotkovaCenaBezSlevy>{$product->getUnitBase()}</JednotkovaCenaBezSlevy>
+                    <JednotkovaCenaBezSlevyCM>{$product->getUnitBase()}</JednotkovaCenaBezSlevyCM>
                     <Katalog>{$product->getItemProductCatalog()}</Katalog>
-                    <Kod>{$product->getItemProductCode()}</Kod>
-                </Artikl>
-            </ObsahPolozky>
-            <SazbaDPH>
-                <DruhSazby EnumValueName="{$product->getTaxMoneyType()}">{$product->getTaxMoneyNumber()}</DruhSazby>
-                <Sazba>{$product->getVatRate()}</Sazba>
-                <Stat>
-                    <Kod>{$product->getTaxCountryCode()}</Kod>
-                </Stat>
-            </SazbaDPH>
-        </PolozkaObjednavkyPrijate>
+                    <Mnozstvi>{$product->getItemQuantity()}</Mnozstvi>
+                    <Nazev>{$product->getItemName()}</Nazev>
+                    <Poradi>{$product->getItemProductPosition()}</Poradi>
+                    <Sleva>0.00</Sleva>
+                    <TypCeny EnumValueName="BezDane">0</TypCeny>
+                    <TypObsahu EnumValueName="SObsahem">1</TypObsahu>
+                    <DPH>
+                        <Celkem>{$product->getRootPrice()}</Celkem>
+                        <CelkemCM>{$product->getRootPrice()}</CelkemCM>
+                        <Dan>{$product->getVatBase()}</Dan>
+                        <DanCM>{$product->getVatBase()}</DanCM>
+                        <Sazba>{$product->getVatRate()}</Sazba>
+                        <Zaklad>{$product->getRootBase()}</Zaklad>
+                        <ZakladCM>{$product->getRootBase()}</ZakladCM>
+                    </DPH>
+                    <ObsahPolozky>
+                        <Artikl>
+                            <Katalog>{$product->getItemProductCatalog()}</Katalog>
+                            <Kod>{$product->getItemProductCode()}</Kod>
+                        </Artikl>
+                    </ObsahPolozky>
+                    <SazbaDPH>
+                        <DruhSazby EnumValueName="{$product->getTaxMoneyType()}">{$product->getTaxMoneyNumber()}</DruhSazby>
+                        <Sazba>{$product->getVatRate()}</Sazba>
+                        <Stat>
+                            <Kod>{$product->getTaxCountryCode()}</Kod>
+                        </Stat>
+                    </SazbaDPH>
+                </PolozkaObjednavkyPrijate>
+            {/foreach}
         {/if}
     </Polozky>
 </ObjednavkaPrijata>
