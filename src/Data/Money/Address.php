@@ -6,6 +6,7 @@ namespace Lemonade\Feed\Data\Money;
  * @Address
  * @\Lemonade\Feed\Data\Money\Address
  * @method getName
+ * @method getCode
  * @method getSurname
  * @method getCompany
  * @method getCity
