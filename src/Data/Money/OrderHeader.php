@@ -114,18 +114,19 @@ final class OrderHeader extends BaseItem
     public function setDate(string $date): void
     {
 
-        $this->config["DatumSchvaleni"] = Date(format: "Y-m-dTH:i:s", timestamp: strtotime(datetime: $date));
-        $this->config["DatumVystaveni"] = Date(format: "Y-m-dTH:i:s", timestamp: strtotime(datetime: $date));
+        $this->config["DatumSchvaleni"] = date(format: "Y-m-d H:i:s", timestamp: strtotime(datetime: $date));
+        $this->config["DatumVystaveni"] = date(format: "Y-m-d H:i:s", timestamp: strtotime(datetime: $date));
     }
 
     /**
      * @param string $vs
+     * @param string|null $affix
      * @return void
      */
-    public function setVS(string $vs): void
+    public function setVS(string $vs, string $affix = null): void
     {
         $this->config["VariabilniSymbol"] = $vs;
-        $this->config["Nazev"] = sprintf("Objednávka z eshopu č. %s", $vs);
+        $this->config["Nazev"] = (string) $affix !== "" ? sprintf("Objednávka z eshopu č. %s / %s", $vs, $affix) : sprintf("Objednávka z eshopu č. %s", $vs);
     }
 
 
