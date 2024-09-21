@@ -20,7 +20,7 @@
         <KontaktniOsobaNazev>{$item->getConnetionAddress()->getTitle()}</KontaktniOsobaNazev>
         <KontaktniOsobaPrijmeni>{$item->getConnetionAddress()->getSurname()}</KontaktniOsobaPrijmeni>
         <Misto>{$item->getConnetionAddress()->getCity()}</Misto>
-        <Nazev>{$item->getConnetionAddress()->getCompany()}</Nazev>
+        <Nazev>{$item->getConnetionAddress()->getTitle()}</Nazev>
         <PSC>{$item->getConnetionAddress()->getZip()}</PSC>
         <Stat>{$item->getConnetionAddress()->getCountry()}</Stat>
         <Ulice>{$item->getConnetionAddress()->getStreet()}</Ulice>
@@ -51,7 +51,7 @@
         <Email>{$item->getDeliveryAddress()->getEmail()}</Email>
         <KontaktniOsobaNazev>{$item->getDeliveryAddress()->getName()}</KontaktniOsobaNazev>
         <Misto>{$item->getDeliveryAddress()->getCity()}</Misto>
-        <Nazev>{$item->getDeliveryAddress()->getCompany()}</Nazev>
+        <Nazev>{$item->getDeliveryAddress()->getTitle()}</Nazev>
         <PSC>{$item->getDeliveryAddress()->getZip()}</PSC>
         <Stat>{$item->getDeliveryAddress()->getCountry()}</Stat>
         <Telefon>{$item->getDeliveryAddress()->getPhone()}</Telefon>
