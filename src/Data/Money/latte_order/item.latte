@@ -31,6 +31,26 @@
             <Kod>{$item->getConnetionCompany()->getCode()}</Kod>
             <ICO>{$item->getConnetionCompany()->getVat()}</ICO>
             <DIC>{$item->getConnetionCompany()->getVatId()}</DIC>
+            <Adresy>
+                <Kod>{$item->getConnetionCompany()->getCode()}</Kod>
+                <ICO>{$item->getConnetionCompany()->getVat()}</ICO>
+                <DIC>{$item->getConnetionCompany()->getVatId()}</DIC>
+                <ObchodniAdresa>
+                    <KodPsc>{$item->getConnetionAddress()->getZip()}</KodPsc>
+                    <Misto>{$item->getConnetionAddress()->getCity()}</Misto>
+                    <Nazev>{$item->getConnetionAddress()->getTitle()}</Nazev>
+                    <NazevStatu>{$item->getConnetionAddress()->getCountry()}</NazevStatu>
+                    <Ulice>{$item->getConnetionAddress()->getStreet()}</Ulice>
+                    <Psc>
+                        <Misto>{$item->getConnetionAddress()->getCity()}</Misto>
+                        <Psc>{$item->getConnetionAddress()->getZip()}</Psc>
+                    </Psc>
+                    <Stat>
+                        <Kod>{$item->getConnetionCountry()->getCode()}</Kod>
+                        <Nazev>{$item->getConnetionAddress()->getCountry()}</Nazev>
+                    </Stat>
+                </ObchodniAdresa>
+            </Adresy>
             <SeznamSpojeni>
                 <Spojeni>
                     <Popis></Popis>
