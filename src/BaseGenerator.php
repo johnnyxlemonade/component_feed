@@ -224,7 +224,7 @@ abstract class BaseGenerator implements GeneratorInterface {
             fwrite($this->handle, $xmlItem);
 
             unset($xmlItem);
-        }
+        } 
     }
     
     /**

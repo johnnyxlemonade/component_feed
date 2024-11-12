@@ -22,7 +22,7 @@ final class ZboziItem extends BaseItem {
     public $productName;
     
     /** 
-     * @var string 
+     * @var string
      * @required
      */
     public $description;
@@ -40,8 +40,7 @@ final class ZboziItem extends BaseItem {
     public $priceVat;
     
     /**
-     * @var \DateTime|string
-     * @required
+     * @var \DateTime|int
      */
     public $deliveryDate = 0;
     

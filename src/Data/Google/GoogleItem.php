@@ -111,8 +111,8 @@ final class GoogleItem extends BaseItem {
     
     /** @var GoogleProductType[] */
     protected $productTypes = [];
-    
-    
+
+
     /**
      * 
      * @param string|int $itemId
@@ -524,7 +524,7 @@ final class GoogleItem extends BaseItem {
         
         return ($this->deliveries ?? []);
     }
-    
+
     /**
      * Error
      * @return string
