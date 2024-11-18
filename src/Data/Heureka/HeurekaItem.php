@@ -2,6 +2,7 @@
 
 namespace Lemonade\Feed\Data\Heureka;
 use Lemonade\Feed\BaseItem;
+use DateTime;
 
 /**
  * Class Item
@@ -40,8 +41,7 @@ final class HeurekaItem extends BaseItem {
     public $priceVat;
     
     /**
-     * @var \DateTime|string
-     * @required
+     * @var DateTime|int
      */
     public $deliveryDate = 0;
     
@@ -89,13 +89,13 @@ final class HeurekaItem extends BaseItem {
     
     /**
      * Varianty
-     * @var string|null
+     * @var string|int|null
      */
     protected $itemGroupId;
     
     /**
      * Kategorie zbozi
-     * @var HeurekaCategoryText[]
+     * @var array|HeurekaCategoryText[]
      */
     protected $categoryTexts = [];
     
@@ -104,163 +104,170 @@ final class HeurekaItem extends BaseItem {
      * @var HeurekaGift[]
      */
     protected $gifts = [];
-    
 
-    
     /**
-     *
+     * Constructor
      * @param string|int $itemId
      */
-    public function __construct(string|int $itemId) {
+    public function __construct(string|int $itemId)
+    {
         
         $this->itemId = $itemId;
     }
-    
-    
+
     /**
-     * Vraci itemId
+     * Vraci ID
      * @return string
      */
-    public function getItemId(): ?string {
+    public function getItemId(): string
+    {
         
         return (string) $this->itemId;
     }
 
-    
-
     /**
-     * Nazev produktu
+     * Nastavi nazev
      * @param string $productName
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * @return $this
      */
-    public function setProductName(string $productName) {
+    public function setProductName(string $productName): self
+    {
         
-        $this->productName = (string) $productName;
+        $this->productName = $productName;
         
         return $this;
     }
-    
+
     /**
-     * Vraci nazev produktu
+     * Vraci nazev
      * @return string
      */
-    public function getProductName() {
+    public function getProductName(): string
+    {
         
         return $this->productName;
     }
-    
 
     /**
-     * Popis produktu
-     * @param string $description
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * Nastavi popisek
+     * @param string|null $description
+     * @return $this
      */
-    public function setDescription(string $description = null) {
+    public function setDescription(string $description = null): self
+    {
         
         $this->description = (string) $description;
         
         return $this;
     }
-    
+
     /**
-     * Vraci popis nabidky
+     * Vraci popisek
      * @return string
      */
-    public function getDescription() {
+    public function getDescription(): string
+    {
         
         return $this->description;
     }   
 
     /**
-     * Produkt url
+     * Nastavi URL
      * @param string $url
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * @return $this
      */
-    public function setUrl(string $url) {
+    public function setUrl(string $url): self
+    {
         
-        $this->url = (string) $url;
+        $this->url = $url;
         
         return $this;
     }
-    
+
     /**
-     * Vraci URL nabidky
+     * Vraci URL
      * @return string
      */
-    public function getUrl() {
+    public function getUrl(): string
+    {
         
         return $this->url;
     }
-    
+
     /**
-     * Nastavi symbol meny
+     * Nastavi menu
      * @param string $currencySymbol
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * @return $this
      */
-    public function setCurrency(string $currencySymbol) {
+    public function setCurrency(string $currencySymbol): self
+    {
         
         $this->currency = $currencySymbol;
         
         return $this;
     }
-    
+
     /**
-     * Vraci symbol meny
+     * Vraci menu
      * @return string
      */
-    public function getCurrency() {
+    public function getCurrency(): string
+    {
         
         return $this->currency;
     }
-    
+
     /**
-     * Cena produktu
-     * @param mixed $priceVat
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * Nastavi cenu
+     * @param string|int|float|null $priceVat
+     * @return $this
      */
-    public function setPriceVat($priceVat) {
+    public function setPriceVat(string|int|float $priceVat = null) {
         
         $this->priceVat = (float) $priceVat;
         
         return $this;
     }
-    
+
     /**
-     * Vraci ciselnou hodnotu nabidky
+     * Vraci cenu
      * @return float
      */
-    public function getPriceVat() {
+    public function getPriceVat(): float
+    {
         
         return $this->priceVat;
     }
-    
+
     /**
-     * Nastavi dph
-     * @param string $dph
+     * Nastavi DPH
+     * @param string|int|null $dph
+     * @return $this
      */
-    public function addVatRate(string $dph) {
+    public function addVatRate(string|int $dph = null) {
         
-        $this->vatRate = floatval($dph);
+        $this->vatRate = (int) $dph;
         
         return $this;
     }
-    
+
     /**
-     * Vraci dph sazbu
-     * @return number
+     * Vraci DPH
+     * @return int
      */
-    public function getVatRate() {
+    public function getVatRate(): int
+    {
         
         return $this->vatRate;
     }
-    
-    
+
     /**
-     * Obrazek produktu
-     * @param string $imageUrl
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * Nastavi obrazky
+     * @param string|null $imageUrl
+     * @return $this
      */
-    public function addImage(string $imageUrl = null) {
+    public function addImage(string $imageUrl = null): self
+    {
         
         $this->images[] = new HeurekaImage($imageUrl);
         
@@ -269,104 +276,114 @@ final class HeurekaItem extends BaseItem {
 
     /**
      * Vraci obrazky
-     * @return array|\Lemonade\Feed\Data\Heureka\HeurekaImage[]
+     * @return HeurekaImage[]|array
      */
-    public function getImages() {
+    public function getImages(): array
+    {
         
         return ($this->images ?? []);
     }
-      
+
     /**
-     * EAN 
-     * @param string $ean
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * Nastavi EAN
+     * @param string|null $ean
+     * @return $this
      */
-    public function addEan($ean) {
+    public function addEan(string $ean = null): self
+    {
         
         $this->ean = $ean;
         
         return $this;
     }
-    
+
     /**
-     * Vraci EAN carovy kod
-     * @return null|string
+     * Vraci EAN
+     * @return string|null
      */
-    public function getEan() {
+    public function getEan(): ?string
+    {
         
         return $this->ean;
     }
-    
+
     /**
-     * ISBN
-     * @param string $isbn
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * Nastavi ISBN
+     * @param string|null $isbn
+     * @return $this
      */
-    public function addIsbn(string $isbn = null) {
+    public function addIsbn(string $isbn = null): self
+    {
         
         $this->isbn = $isbn;
         
         return $this;
     }
-    
+
     /**
-     * Vraci identifikacni cislo knihy
-     * @return null|string
+     * Vraci ISBN
+     * @return string|null
      */
-    public function getIsbn() {
+    public function getIsbn(): ?string
+    {
         
         return $this->isbn;
     }
-    
+
     /**
-     * Vyrobce 
-     * @param string $manufacturer
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * Nastavi vyrobce
+     * @param string|null $manufacturer
+     * @return $this
      */
-    public function addManufacturer(string $manufacturer = null) {
+    public function addManufacturer(string $manufacturer = null): self
+    {
         
         $this->manufacturer = $manufacturer;
         
         return $this;
     }    
-    
+
     /**
      * Vrati vyrobce produktu
-     * @return null|string
+     * @return string|null
      */
-    public function getManufacturer() {
+    public function getManufacturer(): ?string
+    {
         
         return $this->manufacturer;
     }
-   
+
     /**
      * Nastaveni parametru produktu
      * @param string $name
      * @param string $val
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * @return $this
      */
-    public function addParameter($name, $val) {
+    public function addParameter(string $name, string $val): self
+    {
         
         $this->parameters[] = new HeurekaParameter($name, $val);
         
         return $this;
     }
-    
+
     /**
      * Vraci parametry produktu
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaParameter[]
+     * @return HeurekaParameter[]
      */
-    public function getParameters() {
+    public function getParameters(): array
+    {
         
         return $this->parameters;
     }
-    
+
     /**
      * Nastaveni nazvu kategorie podle feedu
-     * @param $text
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * @param string $text
+     * @return $this
      */
-    public function addCategoryText($text) {
+    public function addCategoryText(string $text): self
+    {
         
         $this->categoryTexts[] = new HeurekaCategoryText($text);
         
@@ -374,112 +391,112 @@ final class HeurekaItem extends BaseItem {
     }
 
     /**
-     * Vraci kategorie produktu
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaCategoryText[]
+     * Vraci kategorie
+     * @return array|HeurekaCategoryText[]
      */
-    public function getCategoryTexts() {
+    public function getCategoryTexts(): array
+    {
         
         return $this->categoryTexts;
     }
-    
+
     /**
      * Dodaci doba ve dnech
-     * @param string $deliveryDate
-     * @throws \InvalidArgumentException
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * @param int|DateTime $deliveryDate
+     * @return $this
      */
-    public function setDeliveryDate($deliveryDate) {
+    public function setDeliveryDate(int|DateTime $deliveryDate): self
+    {
         
-        if (is_int($deliveryDate) || ($deliveryDate instanceof \DateTime)) {
+        if (is_int($deliveryDate) || ($deliveryDate instanceof DateTime)) {
+
             $this->deliveryDate = $deliveryDate;
         }
         
         return $this;
     }
-    
+
     /**
-     * Vraci dodadci dobu
-     * @return \DateTime|string
+     * @return int|string
      */
-    public function getDeliveryDate() {
+    public function getDeliveryDate(): int|string
+    {
         
-        return $this->deliveryDate instanceof \DateTime ? $this->deliveryDate->format("Y-m-d") : $this->deliveryDate;
+        return $this->deliveryDate instanceof DateTime ? $this->deliveryDate->format("Y-m-d") : (int) $this->deliveryDate;
     }
-    
-    
+
     /**
      * Zpusob a cena dopravy
      * @param HeurekaDelivery $delivery
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * @return $this
      */
-    public function addDelivery(HeurekaDelivery $delivery) {
+    public function addDelivery(HeurekaDelivery $delivery): self
+    {
         
         $this->deliveries[] = $delivery;
         
         return $this;
     }
-    
+
     /**
      * Vraci zpusob a cenu dopravy
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaDelivery[]
+     * @return array|HeurekaDelivery
      */
-    public function getDeliveries() {
+    public function getDeliveries(): array|HeurekaDelivery
+    {
         
         return ($this->deliveries ?? []);
     }
-    
-    
+
     /**
-     * Darek k produktu
-     * @param HeurekaDelivery $delivery
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * @param HeurekaGift $gift
+     * @return $this
      */
-    public function addGift(HeurekaGift $gift) {
+    public function addGift(HeurekaGift $gift): self
+    {
         
         $this->gifts[] = $gift;
         
         return $this;
     }
-    
+
     /**
-     * Vraci darky k produktu
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaGift[]
+     * @return array|HeurekaGift[]
      */
-    public function getGift() {
+    public function getGift(): array|HeurekaGift
+    {
         
         return ($this->gifts ?? []);
     }
-    
+
     /**
-     * Oznaceni skupiny nabidek (varianty)
-     * @param string $itemGroupId
-     * @return \Lemonade\Feed\Data\Heureka\HeurekaItem
+     * @param string|null $itemGroupId
+     * @return $this
      */
-    public function addItemGroupId(string $itemGroupId = null) {
+    public function addItemGroupId(string|int $itemGroupId = null): self
+    {
         
-        $this->itemGroupId = ($itemGroupId <> "" ? mb_substr($itemGroupId, 0, 32) : null);
+        $this->itemGroupId = ((string) $itemGroupId !== "" ? $itemGroupId : null);
         
         return $this;
     }
-    
+
     /**
-     * Vraci skupiny nabidek
-     * @return null|string
+     * @return int|string|null
      */
-    public function getItemGroupId() {
+    public function getItemGroupId(): int|string|null
+    {
         
         return $this->itemGroupId;
     }
-    
+
     /**
-     * 
      * @return string
      */
-    public static function getErrorString(): string {        
+    public static function getErrorString(): string
+    {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><SHOP></SHOP>";
     }
   
-    
-    
-    
+
 }
