@@ -27,8 +27,8 @@
  <g:sale_price n:if="$item->getSalePrice()">{$item->getSalePrice()}</g:sale_price>
  <g:identifier_exists>{$item->isIdentifierExists() ? 'TRUE' : 'FALSE'}</g:identifier_exists>
  <g:gtin n:if="$item->getGtin()">{$item->getGtin()}</g:gtin> 
- <g:mpn n:if="$item->getMpn()">{$item->getMpn()|substr:1,70}</g:mpn>
- <g:brand n:if="$item->getBrand()">{$item->getBrand()|substr:1,70}</g:brand>     
+ <g:mpn n:if="$item->getMpn()">{$item->getMpn()|substr:0,70}</g:mpn>
+ <g:brand n:if="$item->getBrand()">{$item->getBrand()|substr:0,70}</g:brand>
 
  {if !empty($productTypes = $item->getProductTypes())}
   <g:product_type n:foreach="$productTypes as $productType" n:if="!empty($productType->getText())">{$productType->getText()}</g:product_type>
