@@ -10,11 +10,10 @@ interface ItemInterface {
 	/**
 	 * @return bool Validace polozky
      */
-	public function validate();
+	public function validate(): bool;
 	
 	/**
 	 * Vraci error string
-	 * @return string
 	 */
 	public static function getErrorString(): string;
 }

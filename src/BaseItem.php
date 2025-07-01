@@ -10,22 +10,21 @@ use ReflectionProperty;
  */
 abstract class BaseItem implements ItemInterface
 {
+    /**
+     * Error
+     * #[\Override] (php 8.3+)
+     */
+    abstract public static function getErrorString(): string;
 
     /**
-     * @return bool
-     */
+     * Validace
+     * #[\Override] (php 8.3+)
+     **/
     public function validate(): bool
     {
-
-        $test = (new ReflectionObject($this));
-
-        foreach ($test->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            // Check if the property has the @required annotation in its doc comment
-            if ($property->getDocComment() && preg_match('/@required/', $property->getDocComment())) {
-                // Check if the property is set and not null or empty
-                if (empty($this->{$property->getName()})) {
-                    return false;
-                }
+        foreach ($this->getRequiredProperties() as $property) {
+            if ($this->isRequiredAndEmpty($property)) {
+                return false;
             }
         }
 
@@ -33,24 +32,64 @@ abstract class BaseItem implements ItemInterface
     }
 
     /**
-     * @return array
+     * Vrátí seznam chybějících required polí
+     * @return string[]
      */
     public function errors(): array
     {
+        $errors = [];
 
-        $data = [];
-        $test = (new ReflectionObject($this));
-
-        foreach ($test->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-            // Check if the property has the @required annotation in its doc comment
-            if ($property->getDocComment() && preg_match('/@required/', $property->getDocComment())) {
-                // Check if the property is set and not null or empty
-                if (empty($this->{$property->getName()})) {
-                    $data[] = $property->getName();
-                }
+        foreach ($this->getRequiredProperties() as $property) {
+            if ($this->isRequiredAndEmpty($property)) {
+                $errors[] = $property->getName();
             }
         }
 
-        return $data;
+        return $errors;
+    }
+
+    /**
+     * Vrátí všechny veřejné vlastnosti označené jako @required
+     *
+     * @return ReflectionProperty[]
+     */
+    private function getRequiredProperties(): array
+    {
+        $ref = new ReflectionObject($this);
+
+        return array_filter(
+            $ref->getProperties(ReflectionProperty::IS_PUBLIC),
+            fn(ReflectionProperty $property) =>
+                $property->getDocComment() !== false &&
+                preg_match('/^\s*\*\s*@required\b/m', $property->getDocComment()) === 1
+        );
+    }
+
+    /**
+     * Zjistí, zda je required vlastnost "prázdná"
+     * Podporuje typy: null, prázdný string, prázdné pole, prázdný Countable objekt
+     */
+    private function isRequiredAndEmpty(ReflectionProperty $property): bool
+    {
+        /** @phpstan-ignore-next-line */
+        $value = $this->{$property->getName()};
+
+        if ($value === null) {
+            return true;
+        }
+
+        if (is_string($value) && trim($value) === '') {
+            return true;
+        }
+
+        if (is_array($value) && $value === []) {
+            return true;
+        }
+
+        if ($value instanceof \Countable && count($value) === 0) {
+            return true;
+        }
+
+        return false;
     }
 }
