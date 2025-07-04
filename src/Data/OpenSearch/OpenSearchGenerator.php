@@ -1,46 +1,31 @@
 <?php declare(strict_types = 1);
 
 namespace Lemonade\Feed\Data\OpenSearch;
+
 use Lemonade\Feed\BaseGenerator;
 
-
 /**
- * Class Generator
- * @package Lemonade\Feed
- */ 
-final class OpenSearchGenerator extends BaseGenerator {
-
+ * OpenSearchGenerator
+ *
+ * Generátor XML pro OpenSearch integraci.
+ *
+ * • Nastavuje hlavičku `application/xml`
+ * • Šablony jsou ve složce `latte/`
+ * • Vrací vlastní chybovou hlášku přes `OpenSearchItem`
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
+ */
+final class OpenSearchGenerator extends BaseGenerator
+{
     /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::pushHeaders()
+     * Vrací plně kvalifikovaný název třídy s chybovou hláškou.
      */
-    protected function pushHeaders() {
-        
-        header_remove();
-        header("Content-type: application/xml");
+    protected function getItemClass(): string
+    {
+        return OpenSearchItem::class;
     }
-
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::getTemplate()
-     */
-    protected function getTemplate($name) {
-        
-        $reflex = new \ReflectionClass(__CLASS__);
-        
-        return dirname($reflex->getFileName()) . "/latte/" . $name . $this->getExtension();
-    }
-        
-    /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::getErrorString()
-     */
-    protected function getErrorString() {
-        
-        return OpenSearchItem::getErrorString();
-    }
-
 }

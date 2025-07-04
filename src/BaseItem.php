@@ -1,12 +1,24 @@
 <?php declare(strict_types = 1);
 
 namespace Lemonade\Feed;
+
 use ReflectionObject;
 use ReflectionProperty;
 
 /**
- * Class BaseItem
- * @package Lemonade\Feed
+ * BaseItem
+ *
+ * Abstraktní datový objekt pro validaci pomocí @required anotací.
+ *
+ * Implementuje základní metody pro kontrolu povinných polí, určených
+ * komentářovou anotací `@required` u veřejných vlastností. Potomci
+ * musí definovat chybovou hlášku metodou `getErrorString()`.
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
  */
 abstract class BaseItem implements ItemInterface
 {
@@ -66,30 +78,22 @@ abstract class BaseItem implements ItemInterface
     }
 
     /**
-     * Zjistí, zda je required vlastnost "prázdná"
-     * Podporuje typy: null, prázdný string, prázdné pole, prázdný Countable objekt
+     * Zjistí, zda je hodnota požadované vlastnosti "prázdná".
+     *
+     * @param ReflectionProperty $property
+     * @return bool
      */
     private function isRequiredAndEmpty(ReflectionProperty $property): bool
     {
         /** @phpstan-ignore-next-line */
         $value = $this->{$property->getName()};
 
-        if ($value === null) {
-            return true;
-        }
-
-        if (is_string($value) && trim($value) === '') {
-            return true;
-        }
-
-        if (is_array($value) && $value === []) {
-            return true;
-        }
-
-        if ($value instanceof \Countable && count($value) === 0) {
-            return true;
-        }
-
-        return false;
+        return match (true) {
+            $value === null => true,
+            is_string($value) && trim($value) === '' => true,
+            is_array($value) && $value === [] => true,
+            $value instanceof \Countable && count($value) === 0 => true,
+            default => false,
+        };
     }
 }

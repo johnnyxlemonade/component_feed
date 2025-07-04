@@ -5,217 +5,185 @@ namespace Lemonade\Feed;
 use Lemonade\Feed\Cache\FileSystem;
 
 /**
- * Class CsvDownloader
- * @package Lemonade\Feed
+ * CsvParser
+ *
+ * Abstraktní parser CSV feedů pro Lemonade Framework.
+ *
+ * • Stará se o stažení a cachování vzdáleného CSV do filesystemu
+ * • Poskytuje utilitní metody pro práci s kategoriemi (uzly)
+ * • Konkrétní potomci jen implementují `rawData()` a případné
+ *   specifické transformace
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrák <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
  */
-abstract class CsvParser implements ParserInterface {
-        
+abstract class CsvParser implements ParserInterface
+{
+    /** @var int Doba platnosti cache (30 dní) */
+    protected int $cacheTime = 2_592_000;
+
+    /** @var string Identifikátor / název cache souboru */
+    protected string $cacheFile = 'download-file';
+
+    /** @var array Načtená/parsnutá data */
+    protected array $cacheData = [];
+
+    /** @var string|null URL vzdáleného CSV zdroje */
+    protected ?string $cacheUrl = null;
+
     /**
-     * Cas kesovani
-     * @var number
+     * Constructor
      */
-    protected $cacheTime = 2592000;
-    
-    /**
-     * Nazev souboru
-     * @var string
-     */
-    protected $cacheFile = "download-file"; 
-    
-    /**
-     * Data
-     * @var array
-     */
-    protected $cacheData = [];
-    
-    /**
-     * Endpoint url
-     * @var string
-     */
-    protected $cacheUrl = null;
-    
-    /**
-     * CsvDownloader
-     * @param string $endpointUrl
-     * @param bool $forceDownload
-     */
-    public function __construct(string $endpointUrl, bool $forceDownload = true) {
-        
+    public function __construct(string $endpointUrl, bool $forceDownload = true)
+    {
         $this->cacheUrl  = $endpointUrl;
-        $this->cacheData = ($forceDownload ? $this->downloadData() : []);
-        
+        $this->cacheData = $forceDownload ? $this->downloadData() : [];
     }
-    
+
     /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::downloadData()
+     * Stáhne data z cache nebo vzdáleného zdroje.
+     *
+     * @return array|false Načtená/parsnutá data nebo false při chybě
      */
-    public function downloadData() {
-        
+    public function downloadData()
+    {
         try {
-            
             $cache = FileSystem::getInstance($this->cacheUrl, true);
-            $data = $cache->load($cache->getFileId(), $this->cacheTime);
-            
-            if(!$data) {
-                
+            $data  = $cache->load($cache->getFileId(), $this->cacheTime);
+
+            if (!$data) {
                 return $cache->save($cache->getFileId(), $this->rawData());
             }
-            
+
             return $data;
-            
-        } catch (\Exception $e) {
-            // osetreni vyjimky
+        } catch (\Throwable $e) {
+            // TODO: logování nebo přeposlání výjimky podle potřeby
         }
-        
+
         return false;
     }
 
-    
+
     /**
-     * Vraci hlavni kategorie
-     * @return array
+     * Vrací hlavní kořenové kategorie s počtem položek.
+     *
+     * @return array<string,string>
      */
-    public function getMainNodes(): array {
-        
-        $data = [];
-                
-        if(!empty($test = $this->listDropdown())) {
-           
-            foreach (\array_keys($test) as $name) {
-                $data[$name] = \sprintf("%s [%d]", $name, \count($test[$name]));
+    public function getMainNodes(): array
+    {
+        $out = [];
+
+        if ($map = $this->listDropdown()) {
+            foreach (array_keys($map) as $name) {
+                $out[$name] = sprintf('%s [%d]', $name, count($map[$name]));
             }
         }
-        
-        return $data;
+
+        return $out;
     }
 
-    
     /**
+     * Vrací data pro vybrané kategorie podle názvů.
      *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::getNodeArrayByName()
+     * @param string[] $name
+     * @return array
      */
-    public function getNodeArrayByName(array $name): array {
-        
+    public function getNodeArrayByName(array $name): array
+    {
         $test = $this->listDropdown();
         $data = [];
-        
-        if(!empty($test)) {
-            foreach(\array_keys($test) as $cat) {
-                if(\in_array($cat, $name)) {
-                    
+
+        if ($test) {
+            foreach (array_keys($test) as $cat) {
+                if (in_array($cat, $name, true)) {
                     $data[$cat] = $test[$cat];
                 }
             }
         }
-        
+
         return $data;
     }
-        
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::getNodeNameById()
-     */
-    public function getNodeNameById(string $id): string {
-        
-        if($this->hasData()) {
-            
+
+    /** {@inheritDoc} */
+    public function getNodeNameById(string $id): string
+    {
+        if ($this->hasData()) {
             $data = $this->getData();
-            
-            return ($data[$id]["feed_category_name"] ?? "");
+            return $data[$id]['feed_category_name'] ?? '';
         }
-        
-        return "";
+
+        return '';
     }
-    
+
     /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::getNodeNameById()
+     * Vrací cestu (breadcrumb) k uzlu podle ID.
      */
-    public function getNodePathById(string $id): string {
-        
-        if($this->hasData()) {
-            
+    public function getNodePathById(string $id): string
+    {
+        if ($this->hasData()) {
             $data = $this->getData();
-            
-            return ($data[$id]["feed_category_path"] ?? "");
+            return $data[$id]['feed_category_path'] ?? '';
         }
-        
-        return "";
+
+        return '';
     }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::listDropdown()
-     */
-    public function listDropdown(): array {
-        
-        $data = [];
-        
-        if($this->hasData()) {
-            foreach($this->getData() as $val) {
-                                
-                $path = \explode("###", $val["feed_category_explode"]);
-                $xres = \sprintf("%s ### ", $path["0"]);
-                
-                $data[$this->filterName($path["0"])][$val["feed_category_id"]] = \str_replace($xres, "", $val["feed_category_path"]);
+
+    /** {@inheritDoc} */
+    public function listDropdown(): array
+    {
+        $out = [];
+
+        if ($this->hasData()) {
+            foreach ($this->getData() as $val) {
+                $path  = explode('###', $val['feed_category_explode']);
+                $root  = trim($path[0]);
+                $clean = sprintf('%s ### ', $root);
+
+                $out[$this->filterName($root)][$val['feed_category_id']] =
+                    str_replace($clean, '', $val['feed_category_path']);
             }
         }
-        
-        return $data;
+
+        return $out;
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::hasData()
-     */
-    public function hasData(): bool {
-    
-        if($this->cacheData) {
-            return (\count($this->cacheData) > 0);
-        }
-        
-        return false;        
+    /** {@inheritDoc} */
+    public function hasData(): bool
+    {
+        return $this->cacheData !== [];
     }
 
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::getData()
-     */
-    public function getData(): array {
-
-        if(\is_array($this->cacheData)) {
-            return $this->cacheData;
-        }
-        
-        return [];
+    /** {@inheritDoc} */
+    public function getData(): array
+    {
+        return $this->cacheData;
     }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::getAllNodes()
-     */
-    public  function getAllNodes(): array {
-        
+
+
+    /** {@inheritDoc} */
+    public function getAllNodes(): array
+    {
         return $this->getData();
     }
 
-    
     /**
-     * Nazev filtr
-     * @param string $text
+     * Ořeže název kategorie.
+     *
+     * @param string|null $text
      * @return string
      */
-    protected function filterName(string $text = null): string {
-        return \trim($text);
+    protected function filterName(?string $text = null): string
+    {
+        return trim((string) $text);
     }
 
+    /**
+     * Vrátí surová CSV data; musí implementovat konkrétní parser.
+     *
+     * @return array
+     */
+    abstract public function rawData(): array;
 }

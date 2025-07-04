@@ -1,46 +1,32 @@
 <?php declare(strict_types = 1);
 
 namespace Lemonade\Feed\Data\Zbozi;
+
 use Lemonade\Feed\BaseGenerator;
 
 /**
- * Class Generator
- * @package Lemonade\Feed
+ * ZboziGenerator
+ *
+ * Generátor XML feedu pro Zbozi.cz.
+ *
+ * • Vygeneruje soubor pomocí `.latte` šablon
+ * • Nastaví `Content-Type: application/xml`
+ * • Vrací chybovou hlášku přes ZboziItem::getErrorString()
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
  */
-final class ZboziGenerator extends BaseGenerator {
+final class ZboziGenerator extends BaseGenerator
+{
+    /**
+     * Vrací plně kvalifikovaný název třídy s chybovou hláškou.
+     */
+    protected function getItemClass(): string
+    {
+        return ZboziItem::class;
+    }
 
-    
-    /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::pushHeaders()
-     */
-    protected function pushHeaders() {
-        
-        header_remove();
-        header("Content-type: application/xml");
-    }
-    
-    /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::getTemplate()
-     */
-    protected function getTemplate($name) {
-        
-        $reflex = new \ReflectionClass(__CLASS__);
-        
-        return dirname($reflex->getFileName()) . "/latte/" . $name . $this->getExtension();
-    }
-    
-    /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::getErrorString()
-     */
-    protected function getErrorString() {
-        
-        return ZboziItem::getErrorString();
-    }
-    
 }

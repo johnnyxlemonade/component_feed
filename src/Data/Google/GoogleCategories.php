@@ -1,87 +1,95 @@
 <?php declare(strict_types = 1);
 
 namespace Lemonade\Feed\Data\Google;
+
 use Lemonade\Feed\CsvParser;
 use Lemonade\Feed\Helper\HelperString;
 
 /**
- * Class CategoriesHelper
- * @package Lemonade\Feed
- */ 
-final class GoogleCategories extends CsvParser {
-
+ * GoogleCategories
+ *
+ * Parser kategorií pro feed Google Merchant Center.
+ *
+ * • Stahuje textový taxonomy feed (s ID) z oficiálního endpointu
+ * • Rozpoznává hierarchii kategorií podle `>`
+ * • Vytváří strukturu podobnou feedu Zboží.cz s rozkladem cesty
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
+ */
+final class GoogleCategories extends CsvParser
+{
     /**
-     * Endpoint
+     * URL taxonomy souboru Google Merchant Center (česká verze)
      * @var string
      */
-    const ENDPOINT_URL = "https://www.google.com/basepages/producttype/taxonomy-with-ids.cs-CZ.txt";
-    
+    public const ENDPOINT_URL = 'https://www.google.com/basepages/producttype/taxonomy-with-ids.cs-CZ.txt';
+
     /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::getUrl()
+     * Vrací endpoint URL.
      */
-    public function getUrl(): string {
+    public function getUrl(): string
+    {
         return self::ENDPOINT_URL;
     }
-    
+
     /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\ParserInterface::rawData()
+     * Načte a zpracuje surový textový taxonomy feed Google.
+     *
+     * @return array
      */
-    public function rawData() {
-        
-        $data = [];
-        
+    public function rawData(): array
+    {
+        $data  = [];
+        $first = true;
+
         try {
-            
-            $first = true;
-            $hand = \fopen($this->cacheUrl, "r");
-            
-            
-            while (($line = fgets($hand, 1000)) !== false) {
-                if (!$first) {
-                    
-                    $tmp = \array_map([HelperString::class, "fixUtf8"], [$line]);
-                    $tmp = \explode(" - ", $line);
-                    
-                    if(\strpos($line, ">") !== FALSE) {
-                        
-                        $path = \explode(" > ", $tmp[1]);
-                        
-                        $data[$this->filterName($tmp["1"])] = [
-                            "feed_category_id" => $tmp[0],
-                            "feed_category_name" => $this->filterName(\end($path)),
-                            "feed_category_main" => $this->filterName($path[0]),
-                            "feed_category_path" => $this->filterName($tmp[1]),
-                            "feed_category_explode" => \str_replace(">", "###", $this->filterName($tmp["1"])),
-                        ];
-                        
-                    } else {
-                        
-                        $data[$this->filterName($tmp["1"])] = [
-                            "feed_category_id" => $tmp[0],
-                            "feed_category_name" => $this->filterName($tmp[1]),
-                            "feed_category_main" => NULL,                            
-                            "feed_category_path" => $this->filterName($tmp[1]),
-                            "feed_category_explode" => $this->filterName($tmp[1]),
-                        ];
-                    }
-                    
-                    
+            $handle = fopen($this->cacheUrl, 'r');
+
+            while (($line = fgets($handle, 1000)) !== false) {
+                if ($first) {
+                    $first = false;
+                    continue;
                 }
-                
-                $first = false;
+
+                $line = HelperString::fixUtf8(trim($line));
+                $tmp  = explode(' - ', $line, 2);
+
+                if (count($tmp) !== 2) {
+                    continue; // neplatný řádek
+                }
+
+                $id   = $this->filterName($tmp[0]);
+                $path = $this->filterName($tmp[1]);
+
+                if (strpos($path, '>') !== false) {
+                    $parts = explode(' > ', $path);
+                    $data[$id] = [
+                        'feed_category_id'      => $id,
+                        'feed_category_name'    => $this->filterName(end($parts)),
+                        'feed_category_main'    => $this->filterName($parts[0]),
+                        'feed_category_path'    => $path,
+                        'feed_category_explode' => str_replace('>', '###', $path),
+                    ];
+                } else {
+                    $data[$id] = [
+                        'feed_category_id'      => $id,
+                        'feed_category_name'    => $path,
+                        'feed_category_main'    => null,
+                        'feed_category_path'    => $path,
+                        'feed_category_explode' => $path,
+                    ];
+                }
             }
-            
-            
-        } catch (\Exception $e) {
-            // osetreni vyjimky
+
+            fclose($handle);
+        } catch (\Throwable $e) {
+            // TODO: log nebo výjimka podle potřeby
         }
-        
+
         return $data;
     }
-    
-    
 }

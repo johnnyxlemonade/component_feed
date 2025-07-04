@@ -1,46 +1,31 @@
 <?php declare(strict_types = 1);
 
 namespace Lemonade\Feed\Data\Sitemap;
+
 use Lemonade\Feed\BaseGenerator;
 
 /**
- * Class SitemapGenerator
- * @package Lemonade\Feed
- */ 
-final class SitemapGenerator extends BaseGenerator {
-    
+ * SitemapGenerator
+ *
+ * Generátor XML pro Google Sitemap.
+ *
+ * • Vygeneruje sitemap soubor ze šablony (`latte/`)
+ * • Nastavuje `Content-Type: application/xml`
+ * • Vrací chybovou hlášku přes SitemapItem::getErrorString()
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
+ */
+final class SitemapGenerator extends BaseGenerator
+{
     /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::pushHeaders()
+     * Vrací plně kvalifikovaný název třídy s chybovou hláškou.
      */
-    protected function pushHeaders() {
-        
-        header_remove();
-        header("Content-type: application/xml");
+    protected function getItemClass(): string
+    {
+        return SitemapItem::class;
     }
-
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::getTemplate()
-     */
-    protected function getTemplate($name) {        
-        
-        $reflex = new \ReflectionClass(__CLASS__);   
-        
-        return dirname($reflex->getFileName()) . "/latte/" . $name . $this->getExtension();
-    }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::getErrorString()
-     */
-    protected function getErrorString() {
-        
-        return SitemapItem::getErrorString();
-    }
-
-
 }

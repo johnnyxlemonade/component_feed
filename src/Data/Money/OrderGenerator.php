@@ -1,43 +1,31 @@
 <?php declare(strict_types = 1);
 
 namespace Lemonade\Feed\Data\Money;
+
 use Lemonade\Feed\BaseGenerator;
 
 /**
- * @OrderGenerator
- * @\Lemonade\Feed\Data\Money\OrderGenerator
- */ 
+ * OrderGenerator
+ *
+ * Generátor XML objednávek pro export do systému Money.
+ *
+ * • Nastavuje hlavičku `application/xml`
+ * • Používá šablony z adresáře `latte_order/`
+ * • Generuje chybové hlášky na základě šablony `OrderHeader`
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
+ */
 final class OrderGenerator extends BaseGenerator
 {
-
     /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::pushHeaders()
+     * Vrací plně kvalifikovaný název třídy s chybovou hláškou.
      */
-    protected function pushHeaders() {
-        
-        header_remove();
-        header("Content-type: application/xml");
+    protected function getItemClass(): string
+    {
+        return OrderHeader::class;
     }
-
-    /**
-     * @param $name
-     * @return string
-     */
-    protected function getTemplate($name) {
-        
-        $reflex = new \ReflectionClass(objectOrClass: __CLASS__);
-        
-        return dirname($reflex->getFileName()) . "/latte_order/" . $name . $this->getExtension();
-    }
-
-    /**
-     * @return array|string|string[]
-     */
-    protected function getErrorString() {
-        
-        return \str_replace(["{name}", "{url}"], [$this->getAppName(), $this->getAppHost()], OrderHeader::getErrorString());
-    }
-    
 }

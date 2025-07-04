@@ -1,161 +1,147 @@
 <?php declare(strict_types = 1);
 
 namespace Lemonade\Feed;
+
 use Latte\Engine;
 
 /**
- * Class BaseGenerator
- * @package Lemonade\Feed
+ * BaseGenerator
+ *
+ * Abstraktní generátor výstupních souborů (např. XML feed) pomocí Latte šablon.
+ *
+ * • Používá `tmpfile()` pro sestavení výstupu
+ * • Generuje výstup skrze šablony `header`, `item`, `footer`
+ * • Umožňuje uložení do souboru nebo přímý výstup s MIME headerem
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
  */
-abstract class BaseGenerator implements GeneratorInterface {
+abstract class BaseGenerator implements GeneratorInterface
+{
+    /**
+     * Přípona šablony (default: .latte)
+     */
+    private string $fileExtension = '.latte';
 
     /**
-     * Sablona
+     * MIME typ výstupu (např. application/xml, application/html)
      */
-    private $fileExtension = ".latte"; 
-    
+    private string $outputMime = 'application/html';
+
     /**
-     * Vystup
-     * @var string
+     * Flag – připravenost výstupního souboru
      */
-    private $outputMime = "application/html";
-    
+    private bool $prepared = false;
+
     /**
-     * Zpracovani
-     * @var bool
-     */
-    private $prepared = false;
-    
-    /**
-     * tmp 
-     * @var resource|bool|null
+     * Handle na dočasný výstupní soubor
+     *
+     * @var resource|false|null
      */
     private $handle;
 
     /**
-     * Uloziste
-     * @var BaseStorage
+     * Úložiště pro zápis na disk
      */
-    private $storage;
-    
-    /**
-     * Hostitel
-     * @var string|null
-     */
-    private $appHost;
-    
-    /**
-     * Nazev webu
-     * @var string
-     */
-    private $appName;
+    private BaseStorage $storage;
 
-    
     /**
-     * BaseGenerator constructor
-     * @param BaseStorage $storage
-     * @param string $dataHost
-     * @param string $appName
+     * Hostitel (např. doména)
      */
-    public function __construct(BaseStorage $storage, string $appHost = null, string $appName = null, protected readonly Engine $engine = new Engine()) {
-        
+    private ?string $appHost;
+
+    /**
+     * Název webu nebo aplikace
+     */
+    private ?string $appName;
+
+    /**
+     * Latte engine pro generování šablon
+     */
+    public function __construct(
+        BaseStorage $storage,
+        ?string $appHost = null,
+        ?string $appName = null,
+        protected readonly Engine $engine = new Engine()
+    ) {
         $this->storage = $storage;
-        $this->appHost = (string) $appHost;
-        $this->appName = (string) $appName;    
+        $this->appHost = $appHost;
+        $this->appName = $appName;
     }
-    
-    
+
     /**
-     * Hostitel
-     * @return string
+     * Nastaví výstupní hlavičky pro XML soubor.
      */
-    public function getAppHost(): string
+    protected function pushHeaders(): void
     {
-
-        return ($this->appHost ?? $_SERVER["HTTP_HOST"] ?? "local");
+        header_remove();
+        header('Content-type: application/xml');
     }
-    
+
     /**
-     * Nazev
-     * @return string
+     * Vrací chybovou hlášku při selhání výstupu.
      */
-    public function getAppName(): string
+    protected function getErrorString(): string
     {
-
-        return ($this->appName ?? "");
+        return \str_replace(
+            ['{name}', '{url}'],
+            [$this->getAppName(), $this->getAppHost()],
+            $this->getItemClass()::getErrorString()
+        );
     }
 
     /**
-     * Sablona
-     * @param string 
+     * Inicializuje výstupní stream a vygeneruje hlavičku.
      */
-    abstract protected function getTemplate($name);
-    
-    /**
-     * Hlavicky
-     */
-    abstract protected function pushHeaders();
-    
-    /**
-     * Error string
-     */
-    abstract protected function getErrorString();
-    
-
-    /**
-     * Pripravit temp soubor
-     */
-    protected function prepareTmpFile() {
-        
+    protected function prepareTmpFile(): void
+    {
         $this->handle = tmpfile();
-        $this->prepareTemplate("header", true);
+        $this->prepareTemplate('header', true);
         $this->prepared = true;
     }
 
     /**
-     * Pripraveni sablony
-     * @param $template
+     * Připraví šablonu (header = Latte, ostatní = raw soubory) a zapíše ji do výstupu.
+     *
+     * @param string $template Název šablony (např. "header", "item", "footer")
+     * @return void
      */
-    protected function prepareTemplate($template) {
-        
+    protected function prepareTemplate(string $template): void
+    {
         $file = $this->getTemplate($template);
-        
-        if($template === "header") {
-            
+
+        if ($template === 'header') {
             $latte = new Engine;
             $string = $latte->renderToString($file, [
-                "generator" => __NAMESPACE__, 
-                "host" => $this->getAppHost(),
-                "name" => $this->getAppName(),
-                "time" => time()                
+                'generator' => __NAMESPACE__,
+                'host'      => $this->getAppHost(),
+                'name'      => $this->getAppName(),
+                'time'      => time(),
             ]);
+            fwrite($this->handle, $string);
             
         } else {
-            
-            $handle = fopen($file, "r");
-            $string = fread($handle, filesize($file));
+            $handle = fopen($file, 'r');
+            while (!feof($handle)) {
+                fwrite($this->handle, fread($handle, 8192));
+            }
             fclose($handle);
         }
-
-        fwrite($this->handle, $string);        
     }
-    
-    
+
     /**
-     * Vraci typ sablony
-     * @return string
+     * Vrací příponu šablon.
      */
     protected function getExtension(): string
     {
-
         return $this->fileExtension;
     }
-    
-    
+
     /**
-     * Ulozeni do souboru
-     * @param string $filename
-     * @param string $callback
+     * Zpracuje a zapíše výstup do souboru nebo vrátí jako string.
      */
     protected function writeFile(string $filename = null, string $callback = null) {
      
@@ -202,51 +188,78 @@ abstract class BaseGenerator implements GeneratorInterface {
         
         return $dom->saveXML();
     }
-    
-    
+
     /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\GeneratorInterface::addItem()
+     * Vrací aktuální hostitele aplikace (s preferencí ENV proměnných).
+     *
+     * Priority:
+     *  1. Vlastní hodnota z konstruktoru ($appHost)
+     *  2. ENV proměnná APP_HTTP_HOST
+     *  3. Serverová proměnná HTTP_HOST
+     *  4. Výchozí hodnota "local"
+     *
+     * @return string
      */
-    public function addItem(ItemInterface $item) {
+    public function getAppHost(): string
+    {
+        return $this->appHost
+            ?? ($_ENV['APP_HTTP_HOST'] ?? null)
+            ?? ($_SERVER['HTTP_HOST'] ?? 'local');
+    }
 
+    /**
+     * Vrací název webu/aplikace.
+     */
+    public function getAppName(): string
+    {
+        return $this->appName ?? '';
+    }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function addItem(ItemInterface $item): void
+    {
         if (!$this->prepared) {
-
             $this->prepareTmpFile();
         }
 
         if ($item->validate()) {
-
-            $xmlItem = $this->engine->renderToString($this->getTemplate("item"), ["item" => $item]);
-
-            fwrite($this->handle, $xmlItem);
-
-            unset($xmlItem);
-        } 
+            $xml = $this->engine->renderToString($this->getTemplate('item'), ['item' => $item]);
+            fwrite($this->handle, $xml);
+        }
     }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\GeneratorInterface::output()
-     */
-    public function output(string $callback = null) {
 
+    /**
+     * {@inheritdoc}
+     */
+    public function output(string $callback = null): void
+    {
         $this->pushHeaders();
-        
-        exit((empty($data = $this->writeFile(null, $callback)) ? $this->getErrorString() : $data));
+        exit($this->writeFile(null, $callback) ?: $this->getErrorString());
     }
-    
+
     /**
-     * 
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\GeneratorInterface::save()
+     * {@inheritdoc}
      */
-    public function save(string $filename = null, string $callback = null) {
-        
+    public function save(string $filename = null, string $callback = null)
+    {
         return $this->writeFile($filename, $callback);
     }
+
+    /**
+     * Vrací cestu k šabloně.
+     */
+    protected function getTemplate(string $name): string
+    {
+        $reflex = new \ReflectionClass($this);
+        return dirname($reflex->getFileName()) . '/latte/' . $name . $this->getExtension();
+    }
+
+    /**
+     * Vrací plně kvalifikovaný název třídy
+     */
+    abstract protected function getItemClass(): string;
+
 
 }

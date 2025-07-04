@@ -1,46 +1,31 @@
 <?php declare(strict_types = 1);
 
 namespace Lemonade\Feed\Data\Heureka;
+
 use Lemonade\Feed\BaseGenerator;
 
 /**
- * Class Generator
- * @package Lemonade\Feed
+ * HeurekaGenerator
+ *
+ * Generátor XML feedu pro Heureka.cz.
+ *
+ * • Nastavuje správnou MIME hlavičku `application/xml`
+ * • Načítá šablony z adresáře `latte/` ve svém modulu
+ * • Vrací chybovou hlášku definovanou v `HeurekaItem`
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
  */
-final class HeurekaGenerator extends BaseGenerator {
-
-    
+final class HeurekaGenerator extends BaseGenerator
+{
     /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::pushHeaders()
+     * Vrací plně kvalifikovaný název třídy s chybovou hláškou.
      */
-    protected function pushHeaders() {
-        
-        header_remove();
-        header("Content-type: application/xml");
+    protected function getItemClass(): string
+    {
+        return HeurekaItem::class;
     }
-    
-    /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::getTemplate()
-     */
-    protected function getTemplate($name) {
-        
-        $reflex = new \ReflectionClass(__CLASS__);
-        
-        return dirname($reflex->getFileName()) . "/latte/" . $name . $this->getExtension();
-    }
-    
-    /**
-     *
-     * {@inheritDoc}
-     * @see \Lemonade\Feed\BaseGenerator::getErrorString()
-     */
-    protected function getErrorString() {
-        
-        return HeurekaItem::getErrorString();
-    }
-    
 }

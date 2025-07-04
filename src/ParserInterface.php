@@ -3,55 +3,76 @@
 namespace Lemonade\Feed;
 
 /**
- * Interface ParserInterface
- * @package Lemonade\Feed
+ * ParserInterface
+ *
+ * Rozhraní pro datové parsry používané v rámci Lemonade Frameworku.
+ *
+ * Každý parser implementující toto rozhraní musí být schopen stáhnout surová data,
+ * ověřit jejich dostupnost, zpracovat je do strukturované podoby a nabídnout pomocné
+ * funkce pro výpis nebo identifikaci jednotlivých prvků.
+ *
+ * Typickým použitím je parsování XML nebo jiných feedů pro interní využití.
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
  */
-interface ParserInterface {
-
+interface ParserInterface
+{
     /**
-     * Vraci url
+     * Vrací URL zdroje dat.
      */
     public function getUrl(): string;
-    
+
     /**
-     * Testuje data
+     * Ověřuje, zda jsou dostupná data.
+     *
      * @return bool
      */
     public function hasData(): bool;
-    
+
     /**
-     * Vraci data
+     * Vrací zpracovaná data.
+     *
      * @return array
      */
     public function getData(): array;
-        
+
     /**
-     * Vraci vsechny data
+     * Vrací všechna původní data.
+     *
      * @return array
      */
-    public  function getAllNodes(): array;
-    
+    public function getAllNodes(): array;
+
     /**
-     * Stahuje data
+     * Inicializuje stažení a zpracování dat ze zdroje.
+     *
+     * @return void
      */
-    public function downloadData();  
-    
+    public function downloadData();
+
     /**
-     * Raw data
+     * Vrací původní surová (raw) data.
+     *
+     * @return array
      */
-    public function rawData();  
-    
+    public function rawData(): array;
+
     /**
-     * Data pomocna funkce
+     * Pomocná funkce pro výpis do výběrového pole.
+     *
      * @return array
      */
     public function listDropdown(): array;
-    
+
     /**
-     * Vraci nazev podle Id
+     * Vrací název položky podle jejího ID.
+     *
      * @param string $id
      * @return string
      */
     public function getNodeNameById(string $id): string;
-
 }
