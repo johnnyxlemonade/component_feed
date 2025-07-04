@@ -284,7 +284,7 @@ final class OrderHeader extends BaseItem
     /**
      * @return Address
      */
-    public function getConnetionAddress(): Address
+    public function getConnectionAddress(): Address
     {
         return ($this->connectionAddress["data"] ?: new Address());
     }
@@ -292,7 +292,7 @@ final class OrderHeader extends BaseItem
     /**
      * @return AddressCountry
      */
-    public function getConnetionCountry(): AddressCountry
+    public function getConnectionCountry(): AddressCountry
     {
 
         return ($this->connectionAddress["country"] ?: new AddressCountry());
@@ -301,7 +301,7 @@ final class OrderHeader extends BaseItem
     /**
      * @return AddressCompany
      */
-    public function getConnetionCompany(): AddressCompany
+    public function getConnectionCompany(): AddressCompany
     {
 
         return ($this->connectionAddress["company"] ?: new AddressCompany());

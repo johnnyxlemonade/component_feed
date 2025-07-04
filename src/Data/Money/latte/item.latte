@@ -16,37 +16,37 @@
     <Poznamka>{$item->getPoznamka()}</Poznamka>
     <Vystavil>{$item->getVystavil()}</Vystavil>
     <Adresa>
-        <KontaktniOsobaJmeno>{$item->getConnetionAddress()->getName()}</KontaktniOsobaJmeno>
-        <KontaktniOsobaNazev>{$item->getConnetionAddress()->getTitle()}</KontaktniOsobaNazev>
-        <KontaktniOsobaPrijmeni>{$item->getConnetionAddress()->getSurname()}</KontaktniOsobaPrijmeni>
-        <Misto>{$item->getConnetionAddress()->getCity()}</Misto>
-        <Nazev>{$item->getConnetionAddress()->getTitle()}</Nazev>
-        <PSC>{$item->getConnetionAddress()->getZip()}</PSC>
-        <Stat>{$item->getConnetionAddress()->getCountry()}</Stat>
-        <Ulice>{$item->getConnetionAddress()->getStreet()}</Ulice>
+        <KontaktniOsobaJmeno>{$item->getConnectionAddress()->getName()}</KontaktniOsobaJmeno>
+        <KontaktniOsobaNazev>{$item->getConnectionAddress()->getTitle()}</KontaktniOsobaNazev>
+        <KontaktniOsobaPrijmeni>{$item->getConnectionAddress()->getSurname()}</KontaktniOsobaPrijmeni>
+        <Misto>{$item->getConnectionAddress()->getCity()}</Misto>
+        <Nazev>{$item->getConnectionAddress()->getTitle()}</Nazev>
+        <PSC>{$item->getConnectionAddress()->getZip()}</PSC>
+        <Stat>{$item->getConnectionAddress()->getCountry()}</Stat>
+        <Ulice>{$item->getConnectionAddress()->getStreet()}</Ulice>
         <AdresaStat>
-            <Kod>{$item->getConnetionCountry()->getCode()}</Kod>
+            <Kod>{$item->getConnectionCountry()->getCode()}</Kod>
         </AdresaStat>
         <Firma>
-            <Kod>{$item->getConnetionCompany()->getCode()}</Kod>
-            <ICO>{$item->getConnetionCompany()->getVat()}</ICO>
-            <DIC>{$item->getConnetionCompany()->getVatId()}</DIC>
+            <Kod>{$item->getConnectionCompany()->getCode()}</Kod>
+            <ICO>{$item->getConnectionCompany()->getVat()}</ICO>
+            <DIC>{$item->getConnectionCompany()->getVatId()}</DIC>
             <Adresy>
-                <Kod>{$item->getConnetionCompany()->getCode()}</Kod>
-                <ICO>{$item->getConnetionCompany()->getVat()}</ICO>
-                <DIC>{$item->getConnetionCompany()->getVatId()}</DIC>
+                <Kod>{$item->getConnectionCompany()->getCode()}</Kod>
+                <ICO>{$item->getConnectionCompany()->getVat()}</ICO>
+                <DIC>{$item->getConnectionCompany()->getVatId()}</DIC>
                 <ObchodniAdresa>
-                    <Misto>{$item->getConnetionAddress()->getCity()}</Misto>
-                    <Nazev>{$item->getConnetionAddress()->getTitle()}</Nazev>
-                    <NazevStatu>{$item->getConnetionAddress()->getCountry()}</NazevStatu>
-                    <Ulice>{$item->getConnetionAddress()->getStreet()}</Ulice>
+                    <Misto>{$item->getConnectionAddress()->getCity()}</Misto>
+                    <Nazev>{$item->getConnectionAddress()->getTitle()}</Nazev>
+                    <NazevStatu>{$item->getConnectionAddress()->getCountry()}</NazevStatu>
+                    <Ulice>{$item->getConnectionAddress()->getStreet()}</Ulice>
                     <Psc>
-                        <Misto>{$item->getConnetionAddress()->getCity()}</Misto>
-                        <Psc>{$item->getConnetionAddress()->getZip()}</Psc>
+                        <Misto>{$item->getConnectionAddress()->getCity()}</Misto>
+                        <Psc>{$item->getConnectionAddress()->getZip()}</Psc>
                     </Psc>
                     <Stat>
-                        <Kod>{$item->getConnetionCountry()->getCode()}</Kod>
-                        <Nazev>{$item->getConnetionAddress()->getCountry()}</Nazev>
+                        <Kod>{$item->getConnectionCountry()->getCode()}</Kod>
+                        <Nazev>{$item->getConnectionAddress()->getCountry()}</Nazev>
                     </Stat>
                 </ObchodniAdresa>
             </Adresy>
@@ -54,7 +54,7 @@
                 <Spojeni>
                     <Popis></Popis>
                     <Poradi>1</Poradi>
-                    <SpojeniCislo>{$item->getConnetionAddress()->getEmail()}</SpojeniCislo>
+                    <SpojeniCislo>{$item->getConnectionAddress()->getEmail()}</SpojeniCislo>
                     <SpojeniKlapka></SpojeniKlapka>
                     <SpojeniMistniPredvolba></SpojeniMistniPredvolba>
                     <Vychozi>True</Vychozi>
