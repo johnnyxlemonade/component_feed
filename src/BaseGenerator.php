@@ -99,7 +99,7 @@ abstract class BaseGenerator implements GeneratorInterface
     protected function prepareTmpFile(): void
     {
         $this->handle = tmpfile();
-        $this->prepareTemplate('header', true);
+        $this->prepareTemplate('header');
         $this->prepared = true;
     }
 
@@ -122,7 +122,7 @@ abstract class BaseGenerator implements GeneratorInterface
                 'time'      => time(),
             ]);
             fwrite($this->handle, $string);
-            
+
         } else {
             $handle = fopen($file, 'r');
             while (!feof($handle)) {
