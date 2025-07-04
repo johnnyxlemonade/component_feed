@@ -11,8 +11,8 @@ use ReflectionProperty;
  * Abstraktní datový objekt pro validaci pomocí @required anotací.
  *
  * Implementuje základní metody pro kontrolu povinných polí, určených
- * komentářovou anotací `@required` u veřejných vlastností. Potomci
- * musí definovat chybovou hlášku metodou `getErrorString()`.
+ * komentářovou anotací `@required` u veřejných vlastností. Používá se
+ * jako základ pro datové objekty exportů, feedů a dalších struktur.
  *
  * @package     Lemonade Framework
  * @link        https://lemonadeframework.cz/
