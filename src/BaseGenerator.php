@@ -95,12 +95,7 @@ abstract class BaseGenerator implements GeneratorInterface
         $file = $this->getTemplate($template);
 
         if ($template === 'header') {
-            $string = $this->engine->renderToString($file, [
-                'generator' => __NAMESPACE__,
-                'host'      => $this->getAppHost(),
-                'name'      => $this->getAppName(),
-                'time'      => time(),
-            ]);
+            $string = $this->engine->renderToString($file, $this->getHeaderTemplateVars());
             fwrite($this->handle, $string);
 
         } else {
@@ -158,17 +153,23 @@ abstract class BaseGenerator implements GeneratorInterface
     
     /**
      * XML
-     * @param string $content
-     * @return string
      */
-    protected function _formatXml(string $content = null) {
-        
+    protected function _formatXml(?string $content = null): string
+    {
+        if ((string) $content === "") {
+            return "";
+        }
+
+        libxml_use_internal_errors(true);
+
         $dom = new \DOMDocument("1.0");
         $dom->preserveWhiteSpace = false;
         $dom->formatOutput = true;
-        $dom->loadXML($content);
-        
-        return $dom->saveXML();
+
+        $ok = $dom->loadXML($content);
+        libxml_clear_errors();
+
+        return $ok ? $dom->saveXML() : '';
     }
 
     /**
@@ -234,14 +235,39 @@ abstract class BaseGenerator implements GeneratorInterface
      */
     protected function getTemplate(string $name): string
     {
-        $reflex = new \ReflectionClass($this);
-        return dirname($reflex->getFileName()) . '/latte/' . $name . $this->getExtension();
+        $path = dirname((new \ReflectionClass($this))->getFileName()) . '/latte/' . $name . $this->getExtension();
+
+        if (!is_file($path)) {
+            throw new \RuntimeException("Šablona '$name' nenalezena: $path");
+        }
+
+        return $path;
+    }
+
+    protected function getHeaderTemplateVars(): array
+    {
+        return [
+            'generator' => __NAMESPACE__,
+            'host'      => $this->getAppHost(),
+            'name'      => $this->getAppName(),
+            'time'      => time(),
+        ];
     }
 
     /**
      * Vrací plně kvalifikovaný název třídy
      */
     abstract protected function getItemClass(): string;
+
+    /**
+     * Uvolnění zdrojů
+     */
+    public function __destruct()
+    {
+        if (is_resource($this->handle)) {
+            fclose($this->handle);
+        }
+    }
 
 
 }
