@@ -3,26 +3,22 @@
 namespace Lemonade\Feed\Data\Google;
 
 /**
- * Class Image
- * @package Lemonade\Feed
- */ 
-class GoogleImage {
-
-    private $url;
-
-    /**
-     * Image constructor.
-     * @param $url
-     */
-    public function __construct($url) {
-        $this->url = $url;
+ * Reprezentace obrázku pro XML feed Google Merchant Center.
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
+ */
+final class GoogleImage
+{
+    public function __construct(protected readonly ?string $url = null)
+    {
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUrl() {
+    public function getUrl(): ?string
+    {
         return $this->url;
     }
-
 }

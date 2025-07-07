@@ -5,13 +5,7 @@ namespace Lemonade\Feed\Data\Heureka;
 use Lemonade\Feed\BaseGenerator;
 
 /**
- * HeurekaGenerator
- *
- * Generátor XML feedu pro Heureka.cz.
- *
- * • Nastavuje správnou MIME hlavičku `application/xml`
- * • Načítá šablony z adresáře `latte/` ve svém modulu
- * • Vrací chybovou hlášku definovanou v `HeurekaItem`
+ * Generátor XML feedu pro Heureka.cz
  *
  * @package     Lemonade Framework
  * @link        https://lemonadeframework.cz/

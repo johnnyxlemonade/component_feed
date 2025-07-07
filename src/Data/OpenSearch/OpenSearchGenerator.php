@@ -5,13 +5,7 @@ namespace Lemonade\Feed\Data\OpenSearch;
 use Lemonade\Feed\BaseGenerator;
 
 /**
- * OpenSearchGenerator
- *
  * Generátor XML pro OpenSearch integraci.
- *
- * • Nastavuje hlavičku `application/xml`
- * • Šablony jsou ve složce `latte/`
- * • Vrací vlastní chybovou hlášku přes `OpenSearchItem`
  *
  * @package     Lemonade Framework
  * @link        https://lemonadeframework.cz/

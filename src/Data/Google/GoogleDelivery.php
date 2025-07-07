@@ -3,63 +3,41 @@
 namespace Lemonade\Feed\Data\Google;
 
 /**
- * GoogleDelivery
- * @package Lemonade\Feed
- */ 
-class GoogleDelivery {
-
-    /** @var string */
-    private $country;
-    
-    /** @var string */
-    private $service;
-    
-    /** @var float */
-    private $price;
-    
-    /** @var string */
-    private $currency;
-
-    /**
-     * Delivery constructor.
-     * @param $countryCode
-     * @param $countryRegion
-     * @param null $priceCod
-     */
-    public function __construct($countryCode, $serviceName, $price, $currency = "CZK") {  
-        
-        $this->country = (string) $countryCode;
-        $this->service = (string) $serviceName;                
-        $this->price = (float) $price;
-        $this->currency = (string) $currency;
+ * Reprezentace dodací podmínky pro XML feed Google Merchant Center.
+ *
+ * @package     Lemonade Framework
+ * @link        https://lemonadeframework.cz/
+ * @author      Honza Mudrak <honzamudrak@gmail.com>
+ * @license     MIT
+ * @since       1.0.0
+ */
+final class GoogleDelivery
+{
+    public function __construct(
+        protected readonly string $country,
+        protected readonly string $service,
+        protected readonly float|int|string $price,
+        protected readonly string $currency = 'CZK'
+    ) {
     }
 
-    /**
-     * @return string
-     */
-    public function getCountry() {
+    public function getCountry(): string
+    {
         return $this->country;
     }
-    
-    /**
-     * @return string
-     */
-    public function getService() {
+
+    public function getService(): string
+    {
         return $this->service;
     }
 
-    /**
-     * @return float
-     */
-    public function getPrice() {
-        return $this->price;
+    public function getPrice(): float
+    {
+        return (float) $this->price;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency() {
+    public function getCurrency(): string
+    {
         return $this->currency;
     }
-
 }

@@ -5,13 +5,7 @@ namespace Lemonade\Feed\Data\Money;
 use Lemonade\Feed\BaseGenerator;
 
 /**
- * OrderGenerator
- *
- * Generátor XML objednávek pro export do systému Money.
- *
- * • Nastavuje hlavičku `application/xml`
- * • Používá šablony z adresáře `latte_order/`
- * • Generuje chybové hlášky na základě šablony `OrderHeader`
+ * Generátor XML objednávek pro export do systému Money S5.
  *
  * @package     Lemonade Framework
  * @link        https://lemonadeframework.cz/
