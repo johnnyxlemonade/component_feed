@@ -44,33 +44,14 @@ abstract class BaseGenerator implements GeneratorInterface
     private $handle;
 
     /**
-     * Úložiště pro zápis na disk
-     */
-    private BaseStorage $storage;
-
-    /**
-     * Hostitel (např. doména)
-     */
-    private ?string $appHost;
-
-    /**
-     * Název webu nebo aplikace
-     */
-    private ?string $appName;
-
-    /**
      * Latte engine pro generování šablon
      */
     public function __construct(
-        BaseStorage $storage,
-        ?string $appHost = null,
-        ?string $appName = null,
-        protected readonly Engine $engine = new Engine()
-    ) {
-        $this->storage = $storage;
-        $this->appHost = $appHost;
-        $this->appName = $appName;
-    }
+        protected readonly BaseStorage $storage,
+        protected readonly Engine $engine = new Engine(),
+        protected readonly ?string $appHost = null,
+        protected readonly ?string $appName = null,
+    ) {}
 
     /**
      * Nastaví výstupní hlavičky pro XML soubor.
@@ -114,8 +95,7 @@ abstract class BaseGenerator implements GeneratorInterface
         $file = $this->getTemplate($template);
 
         if ($template === 'header') {
-            $latte = new Engine;
-            $string = $latte->renderToString($file, [
+            $string = $this->engine->renderToString($file, [
                 'generator' => __NAMESPACE__,
                 'host'      => $this->getAppHost(),
                 'name'      => $this->getAppName(),
@@ -143,7 +123,7 @@ abstract class BaseGenerator implements GeneratorInterface
     /**
      * Zpracuje a zapíše výstup do souboru nebo vrátí jako string.
      */
-    protected function writeFile(string $filename = null, string $callback = null) {
+    protected function writeFile(string $filename = null, ?string $callback = null) {
      
         if ($this->prepared) {
             
@@ -162,12 +142,14 @@ abstract class BaseGenerator implements GeneratorInterface
             
             // ukladame
             if(!empty($filename)) {
-                
                 $data = $this->storage->save($filename, $data);                
-            } 
-                                          
-            fclose($this->handle);
-                                
+            }
+
+            // fail safe close
+            if (is_resource($this->handle)) {
+                fclose($this->handle);
+            }
+
             $this->prepared = false;
             
             return $data;
