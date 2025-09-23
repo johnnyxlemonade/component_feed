@@ -6,7 +6,9 @@ A lightweight PHP library for generating product feeds (XML, stream-based) for C
 ✅ **Strict typing & Symfony Validator**  
 ✅ **Extensible generators** – Sitemap, Google Merchant, Zboží.cz, Heureka, Money, Pohoda  
 ✅ **Optional XSL stylesheets** for pretty sitemaps with translations (cs/en/de/fr/ru/sk)  
-✅ **DTO + VO architecture** for clean domain models
+✅ **DTO + VO architecture** for clean domain models  
+✅ **Cross-format support (XML, JSON, CSV)** – multi-format feed generation for modern integrations  
+✅ **Easy integration with any framework** – fully framework-agnostic (works with Symfony, Nette, Laravel, or plain PHP) thanks to PSR-7 and attributes
 
 ---
 
