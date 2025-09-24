@@ -23,4 +23,5 @@ interface FeedLoggerInterface extends LoggerInterface
      * Zaloguje obecnou chybu generátoru
      */
     public function logGeneratorError(string $generator, Throwable $e): void;
+
 }

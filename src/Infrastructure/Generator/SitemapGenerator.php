@@ -40,8 +40,7 @@ final class SitemapGenerator extends AbstractXmlFeedGenerator
             $this->storeXsl($href, $this->config->lang()->value);
             $this->attachStylesheet($xml, $href);
         } catch (IOErrorException $e) {
-            // TODO: logovat přes LoggerInterface
-            error_log("Failed to write XSL: {$e->getMessage()}");
+            $this->getLogger()->logGeneratorError(static::class, $e);
         }
     }
 
@@ -75,6 +74,10 @@ final class SitemapGenerator extends AbstractXmlFeedGenerator
         if (str_starts_with($href, 'http')) {
             return $href;
         }
-        return '/' . ltrim($href, '/');
+        
+        $href = ltrim($href, '/');
+
+        return rtrim($href, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
+
 }
