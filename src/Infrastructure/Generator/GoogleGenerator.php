@@ -2,14 +2,14 @@
 
 namespace Lemonade\Feed\Infrastructure\Generator;
 
-use Lemonade\Feed\Domain\Google\GoogleConfigDto;
+use Lemonade\Feed\Domain\Google\GoogleConfig;
 use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
 
 final class GoogleGenerator extends AbstractXmlFeedGenerator
 {
     public function __construct(
-        private readonly GoogleConfigDto $config,
-                                         ...$deps // filesystem, headers, stream
+        private readonly GoogleConfig $config,
+                                      ...$deps // filesystem, headers, stream
     ) {
         parent::__construct(...$deps);
     }
@@ -30,9 +30,9 @@ final class GoogleGenerator extends AbstractXmlFeedGenerator
     protected function beforeItems(XmlStreamWriter $xml): void
     {
         $xml->start('channel');
-        $xml->element('title', $this->config->shopTitle);
-        $xml->element('link', $this->config->shopLink);
-        $xml->element('description', $this->config->shopDescription);
+        $xml->element('title', $this->config->shopTitle());
+        $xml->element('link', $this->config->shopLink());
+        $xml->element('description', $this->config->shopDescription());
     }
 
     protected function afterItems(XmlStreamWriter $xml): void

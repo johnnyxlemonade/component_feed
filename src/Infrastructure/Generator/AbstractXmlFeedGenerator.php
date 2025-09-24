@@ -6,6 +6,7 @@ use Lemonade\Feed\Infrastructure\IO\FilesystemInterface;
 use Lemonade\Feed\Infrastructure\IO\OutputHeadersInterface;
 use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
 use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
+use Lemonade\Feed\Logger\FeedLoggerInterface;
 use Psr\Http\Message\StreamInterface;
 
 abstract class AbstractXmlFeedGenerator
@@ -13,7 +14,8 @@ abstract class AbstractXmlFeedGenerator
     public function __construct(
         private readonly FilesystemInterface $filesystem,
         private readonly OutputHeadersInterface $headers,
-        private readonly StreamInterface $stream
+        private readonly StreamInterface $stream,
+        private readonly FeedLoggerInterface $logger
     ) {}
 
     /**
@@ -31,29 +33,9 @@ abstract class AbstractXmlFeedGenerator
         return [];
     }
 
-    /**
-     * Hook – před root elementem (např. xml-stylesheet PI).
-     */
-    protected function beforeRoot(XmlStreamWriter $xml): void
-    {
-        // defaultně nic
-    }
-
-    /**
-     * Hook – obsah uvnitř root elementu před položkami.
-     */
-    protected function beforeItems(XmlStreamWriter $xml): void
-    {
-        // defaultně nic
-    }
-
-    /**
-     * Hook – obsah uvnitř root elementu po položkách.
-     */
-    protected function afterItems(XmlStreamWriter $xml): void
-    {
-        // defaultně nic
-    }
+    protected function beforeRoot(XmlStreamWriter $xml): void {}
+    protected function beforeItems(XmlStreamWriter $xml): void {}
+    protected function afterItems(XmlStreamWriter $xml): void {}
 
     protected function getFilesystem(): FilesystemInterface
     {
@@ -70,15 +52,30 @@ abstract class AbstractXmlFeedGenerator
         return $this->stream;
     }
 
+    protected function getLogger(): FeedLoggerInterface
+    {
+        return $this->logger;
+    }
+
     /**
      * @param iterable<XmlExportable> $items
      */
     public function generate(iterable $items): void
     {
+        if ($this->stream->isSeekable()) {
+            $this->stream->rewind();
+        }
+        if ($this->stream->isWritable()) {
+            try {
+                $this->stream->truncate(0);
+            } catch (\Throwable) {
+                // ignore if truncate not supported
+            }
+        }
+
         $writer = new XmlStreamWriter($this->stream);
         $writer->declaration();
 
-        // nově
         $this->beforeRoot($writer);
 
         $writer->start($this->getRootName(), $this->getRootAttributes());
@@ -86,7 +83,14 @@ abstract class AbstractXmlFeedGenerator
         $this->beforeItems($writer);
 
         foreach ($items as $item) {
-            $item->toXml($writer);
+            try {
+                $item->toXml($writer);
+            } catch (\Throwable $e) {
+                // místo generického error() použijeme doménovou metodu
+                $this->logger->logInvalidItem($item, [
+                    'exception' => $e->getMessage(),
+                ]);
+            }
         }
 
         $this->afterItems($writer);
@@ -94,13 +98,18 @@ abstract class AbstractXmlFeedGenerator
         $writer->end($this->getRootName());
     }
 
+
     public function save(string $filename, iterable $items): void
     {
         $this->generate($items);
         $this->stream->rewind();
         $content = $this->stream->getContents();
 
-        $this->filesystem->write($filename, $content);
+        try {
+            $this->filesystem->write($filename, $content);
+        } catch (\Throwable $e) {
+            $this->logger->logGeneratorError(static::class, $e);
+        }
     }
 
     public function output(iterable $items): void

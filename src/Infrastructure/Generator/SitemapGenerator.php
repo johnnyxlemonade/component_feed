@@ -2,15 +2,16 @@
 
 namespace Lemonade\Feed\Infrastructure\Generator;
 
-use Lemonade\Feed\Domain\Sitemap\SitemapConfigDto;
+use Lemonade\Feed\Domain\Sitemap\SitemapConfig;
 use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
 use Lemonade\Feed\Infrastructure\Xsl\SitemapXsl;
+use Lemonade\Feed\Exception\IOErrorException;
 
 final class SitemapGenerator extends AbstractXmlFeedGenerator
 {
     public function __construct(
-        private readonly SitemapConfigDto $config,
-                                          ...$deps // filesystem, headers, stream
+        private readonly SitemapConfig $config,
+                                       ...$deps // filesystem, headers, stream
     ) {
         parent::__construct(...$deps);
     }
@@ -29,26 +30,44 @@ final class SitemapGenerator extends AbstractXmlFeedGenerator
 
     protected function beforeRoot(XmlStreamWriter $xml): void
     {
-        if (!$this->config->withXsl || $this->config->xslHref === null) {
+        if (!$this->config->withXsl() || $this->config->xslHref() === null) {
             return;
         }
 
-        $href = $this->normalizeHref($this->config->xslHref);
-        $hrefWithLang = preg_replace('/\.xsl$/', $this->config->lang->value . '.xsl', $href);
+        $href = $this->buildHrefWithLang($this->config->xslHref());
 
         try {
-            $this->getFilesystem()->write(
-                ltrim($hrefWithLang, '/'),
-                SitemapXsl::content($this->config->lang->value)
-            );
-
-            $xml->pi(
-                'xml-stylesheet',
-                sprintf('type="text/xsl" href="%s"', $hrefWithLang)
-            );
-        } catch (\Throwable $e) {
-            // TODO: logovat chybu místo tichého ignorování
+            $this->storeXsl($href, $this->config->lang()->value);
+            $this->attachStylesheet($xml, $href);
+        } catch (IOErrorException $e) {
+            // TODO: logovat přes LoggerInterface
+            error_log("Failed to write XSL: {$e->getMessage()}");
         }
+    }
+
+    private function buildHrefWithLang(string $href): string
+    {
+        $href = $this->normalizeHref($href);
+
+        $info = pathinfo($href);
+        return $info['dirname'] . '/' . $info['filename'] . '-' . $this->config->lang()->value . '.xsl';
+    }
+
+    private function storeXsl(string $href, string $lang): void
+    {
+        // Tady už necháváme Filesystem házet IOErrorException
+        $this->getFilesystem()->write(
+            $href,
+            SitemapXsl::content($lang)
+        );
+    }
+
+    private function attachStylesheet(XmlStreamWriter $xml, string $href): void
+    {
+        $xml->pi(
+            'xml-stylesheet',
+            sprintf('type="text/xsl" href="%s"', $href)
+        );
     }
 
     private function normalizeHref(string $href): string

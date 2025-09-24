@@ -40,8 +40,17 @@ final class SitemapXslTranslations
             'fr' => self::fr(),
             'ru' => self::ru(),
             'sk' => self::sk(),
+            'es' => self::es(),
+            'it' => self::it(),
+            'pl' => self::pl(),
+            'hu' => self::hu(),
+            'pt' => self::pt(),
+            'nl' => self::nl(),
+            'ro' => self::ro(),
+            'bg' => self::bg(),
             default => self::cs(),
         };
+
     }
 
     private static function cs(): array
@@ -223,4 +232,245 @@ final class SitemapXslTranslations
             ],
         ];
     }
+
+    private static function es(): array
+    {
+        return [
+            'title'      => 'Mapa del sitio XML',
+            'breadcrumb' => 'Inicio',
+            'heading'    => 'Mapa del sitio XML',
+            'generated'  => 'Generado por <a href="https://lemonadeframework.cz/" target="_blank">Lemonade Framework</a>, este es un mapa del sitio XML destinado a los motores de búsqueda.',
+            'columns'    => [
+                'url'       => 'URL',
+                'priority'  => 'Prioridad',
+                'frequency' => 'Frecuencia',
+                'lastmod'   => 'Última modificación',
+            ],
+            'datatable' => [
+                'search'       => 'Buscar:',
+                'lengthMenu'   => 'Mostrar _MENU_ entradas',
+                'info'         => 'Mostrando de _START_ a _END_ de _TOTAL_ entradas',
+                'infoFiltered' => '(filtrado de un total de _MAX_ entradas)',
+                'infoEmpty'    => 'No hay entradas para mostrar',
+                'zeroRecords'  => 'No se encontraron registros coincidentes',
+                'paginate'     => [
+                    'first'    => 'Primera',
+                    'last'     => 'Última',
+                    'next'     => 'Siguiente',
+                    'previous' => 'Anterior',
+                ],
+            ],
+        ];
+    }
+
+    private static function it(): array
+    {
+        return [
+            'title'      => 'Mappa del sito XML',
+            'breadcrumb' => 'Home',
+            'heading'    => 'Mappa del sito XML',
+            'generated'  => 'Generato da <a href="https://lemonadeframework.cz/" target="_blank">Lemonade Framework</a>, questa è una mappa del sito XML destinata ai motori di ricerca.',
+            'columns'    => [
+                'url'       => 'URL',
+                'priority'  => 'Priorità',
+                'frequency' => 'Frequenza',
+                'lastmod'   => 'Ultima modifica',
+            ],
+            'datatable' => [
+                'search'       => 'Cerca:',
+                'lengthMenu'   => 'Mostra _MENU_ voci',
+                'info'         => 'Visualizzazione da _START_ a _END_ di _TOTAL_ voci',
+                'infoFiltered' => '(filtrato da un totale di _MAX_ voci)',
+                'infoEmpty'    => 'Nessuna voce da mostrare',
+                'zeroRecords'  => 'Nessun record corrispondente trovato',
+                'paginate'     => [
+                    'first'    => 'Prima',
+                    'last'     => 'Ultima',
+                    'next'     => 'Successiva',
+                    'previous' => 'Precedente',
+                ],
+            ],
+        ];
+    }
+
+    private static function pl(): array
+    {
+        return [
+            'title'      => 'Mapa witryny XML',
+            'breadcrumb' => 'Strona główna',
+            'heading'    => 'Mapa witryny XML',
+            'generated'  => 'Wygenerowane przez <a href="https://lemonadeframework.cz/" target="_blank">Lemonade Framework</a>, jest to mapa witryny XML przeznaczona dla wyszukiwarek.',
+            'columns'    => [
+                'url'       => 'URL',
+                'priority'  => 'Priorytet',
+                'frequency' => 'Częstotliwość',
+                'lastmod'   => 'Ostatnia modyfikacja',
+            ],
+            'datatable' => [
+                'search'       => 'Szukaj:',
+                'lengthMenu'   => 'Pokaż _MENU_ rekordów',
+                'info'         => 'Wyświetlanie od _START_ do _END_ z _TOTAL_ rekordów',
+                'infoFiltered' => '(filtrowano z _MAX_ rekordów)',
+                'infoEmpty'    => 'Brak rekordów do wyświetlenia',
+                'zeroRecords'  => 'Nie znaleziono pasujących rekordów',
+                'paginate'     => [
+                    'first'    => 'Pierwsza',
+                    'last'     => 'Ostatnia',
+                    'next'     => 'Następna',
+                    'previous' => 'Poprzednia',
+                ],
+            ],
+        ];
+    }
+
+    private static function hu(): array
+    {
+        return [
+            'title'      => 'XML webhelytérkép',
+            'breadcrumb' => 'Főoldal',
+            'heading'    => 'XML webhelytérkép',
+            'generated'  => 'Készült a <a href="https://lemonadeframework.cz/" target="_blank">Lemonade Framework</a> segítségével, ez egy XML webhelytérkép keresőmotorok számára.',
+            'columns'    => [
+                'url'       => 'URL',
+                'priority'  => 'Prioritás',
+                'frequency' => 'Gyakoriság',
+                'lastmod'   => 'Utolsó módosítás',
+            ],
+            'datatable' => [
+                'search'       => 'Keresés:',
+                'lengthMenu'   => 'Mutass _MENU_ bejegyzést',
+                'info'         => '_START_ – _END_ / _TOTAL_ bejegyzés',
+                'infoFiltered' => '(_MAX_ bejegyzésből szűrve)',
+                'infoEmpty'    => 'Nincs megjeleníthető bejegyzés',
+                'zeroRecords'  => 'Nincs találat',
+                'paginate'     => [
+                    'first'    => 'Első',
+                    'last'     => 'Utolsó',
+                    'next'     => 'Következő',
+                    'previous' => 'Előző',
+                ],
+            ],
+        ];
+    }
+
+    private static function pt(): array
+    {
+        return [
+            'title'      => 'Mapa do site XML',
+            'breadcrumb' => 'Início',
+            'heading'    => 'Mapa do site XML',
+            'generated'  => 'Gerado por <a href="https://lemonadeframework.cz/" target="_blank">Lemonade Framework</a>, este é um mapa do site XML destinado a mecanismos de busca.',
+            'columns'    => [
+                'url'       => 'URL',
+                'priority'  => 'Prioridade',
+                'frequency' => 'Frequência',
+                'lastmod'   => 'Última modificação',
+            ],
+            'datatable' => [
+                'search'       => 'Pesquisar:',
+                'lengthMenu'   => 'Mostrar _MENU_ entradas',
+                'info'         => 'Mostrando de _START_ a _END_ de _TOTAL_ entradas',
+                'infoFiltered' => '(filtrado de _MAX_ entradas no total)',
+                'infoEmpty'    => 'Nenhuma entrada para mostrar',
+                'zeroRecords'  => 'Nenhum registro correspondente encontrado',
+                'paginate'     => [
+                    'first'    => 'Primeira',
+                    'last'     => 'Última',
+                    'next'     => 'Próxima',
+                    'previous' => 'Anterior',
+                ],
+            ],
+        ];
+    }
+
+    private static function nl(): array
+    {
+        return [
+            'title'      => 'XML-sitemap',
+            'breadcrumb' => 'Home',
+            'heading'    => 'XML-sitemap',
+            'generated'  => 'Gegenereerd door <a href="https://lemonadeframework.cz/" target="_blank">Lemonade Framework</a>, dit is een XML-sitemap bedoeld voor zoekmachines.',
+            'columns'    => [
+                'url'       => 'URL',
+                'priority'  => 'Prioriteit',
+                'frequency' => 'Frequentie',
+                'lastmod'   => 'Laatst gewijzigd',
+            ],
+            'datatable' => [
+                'search'       => 'Zoeken:',
+                'lengthMenu'   => 'Toon _MENU_ items',
+                'info'         => 'Toont _START_ tot _END_ van _TOTAL_ items',
+                'infoFiltered' => '(gefilterd uit _MAX_ items)',
+                'infoEmpty'    => 'Geen items om te tonen',
+                'zeroRecords'  => 'Geen overeenkomende records gevonden',
+                'paginate'     => [
+                    'first'    => 'Eerste',
+                    'last'     => 'Laatste',
+                    'next'     => 'Volgende',
+                    'previous' => 'Vorige',
+                ],
+            ],
+        ];
+    }
+
+    private static function ro(): array
+    {
+        return [
+            'title'      => 'Hartă site XML',
+            'breadcrumb' => 'Acasă',
+            'heading'    => 'Hartă site XML',
+            'generated'  => 'Generat de <a href="https://lemonadeframework.cz/" target="_blank">Lemonade Framework</a>, aceasta este o hartă a site-ului XML destinată motoarelor de căutare.',
+            'columns'    => [
+                'url'       => 'URL',
+                'priority'  => 'Prioritate',
+                'frequency' => 'Frecvență',
+                'lastmod'   => 'Ultima modificare',
+            ],
+            'datatable' => [
+                'search'       => 'Căutare:',
+                'lengthMenu'   => 'Afișează _MENU_ înregistrări',
+                'info'         => 'Afișare de la _START_ la _END_ din _TOTAL_ înregistrări',
+                'infoFiltered' => '(filtrat din _MAX_ înregistrări în total)',
+                'infoEmpty'    => 'Nicio înregistrare de afișat',
+                'zeroRecords'  => 'Nu au fost găsite înregistrări corespunzătoare',
+                'paginate'     => [
+                    'first'    => 'Prima',
+                    'last'     => 'Ultima',
+                    'next'     => 'Următoarea',
+                    'previous' => 'Anterioară',
+                ],
+            ],
+        ];
+    }
+
+    private static function bg(): array
+    {
+        return [
+            'title'      => 'XML карта на сайта',
+            'breadcrumb' => 'Начало',
+            'heading'    => 'XML карта на сайта',
+            'generated'  => 'Генерирано от <a href="https://lemonadeframework.cz/" target="_blank">Lemonade Framework</a>, това е XML карта на сайта за търсачките.',
+            'columns'    => [
+                'url'       => 'URL',
+                'priority'  => 'Приоритет',
+                'frequency' => 'Честота',
+                'lastmod'   => 'Последна промяна',
+            ],
+            'datatable' => [
+                'search'       => 'Търсене:',
+                'lengthMenu'   => 'Показване на _MENU_ записа',
+                'info'         => 'Показване от _START_ до _END_ от общо _TOTAL_ записа',
+                'infoFiltered' => '(филтрирано от общо _MAX_ записа)',
+                'infoEmpty'    => 'Няма записи за показване',
+                'zeroRecords'  => 'Няма намерени съвпадения',
+                'paginate'     => [
+                    'first'    => 'Първа',
+                    'last'     => 'Последна',
+                    'next'     => 'Следваща',
+                    'previous' => 'Предишна',
+                ],
+            ],
+        ];
+    }
+
 }
