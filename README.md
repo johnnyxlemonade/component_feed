@@ -1,192 +1,123 @@
-# 🍋 Lemonade Feed Generator
+# Lemonade Feed Component
 
-A lightweight PHP library for generating product feeds (XML, stream-based) for Czech & international platforms.
+**Lemonade Feed** is a PHP library for generating e-commerce feeds (Sitemap, Google Merchant, Zboží.cz, Heureka, …) in a **strictly typed, streaming, and framework-agnostic** way.
 
-✅ **Constant-memory streaming** – no giant DOM trees  
-✅ **Strict typing & Symfony Validator**  
-✅ **Extensible generators** – Sitemap, Google Merchant, Zboží.cz, Heureka, Money, Pohoda  
-✅ **Optional XSL stylesheets** for pretty sitemaps with translations (cs/en/de/fr/ru/sk)  
-✅ **DTO + VO architecture** for clean domain models  
-✅ **Cross-format support (XML, JSON)** – modern integrations with multiple feed formats  
-✅ **Easy integration with any framework** – fully framework-agnostic (works with Symfony, Nette, Laravel, or plain PHP) thanks to PSR-7 and attributes
+## ✨ Features
+
+- ✅ Constant-memory streaming (no DOM trees)
+- ✅ Strict typing (PHPStan level 10)
+- ✅ Validation via Symfony Validator
+- ✅ Unified API for XML / JSON
+- ✅ Pluggable Adapters (domain → export)
+- ✅ Easy to extend with new feeds
+- ✅ Cross-format support (XML, JSON, CSV in future)
+- ✅ Framework-agnostic – works anywhere
+- ✅ Optional XSL stylesheets for Sitemap
 
 ---
 
-## 🚀 Installation
+## 🔧 Installation
 
 ```bash
-  composer require lemonade/component_feed
+composer require lemonade/component-feed
 ```
 
 ---
 
-## 📑 Supported feeds
+## 🚀 Usage with FeedBuilder
 
-- **Sitemap** (`urlset`)
-- **Google Merchant** (`rss/channel`)
-- **Zboží.cz** (`SHOP/SHOPITEM`)
-- **Heureka** (`SHOP/SHOPITEM`)
-- **Money** (orders)
-- **Pohoda** (orders, invoices)
+The main entrypoint is `FeedBuilder`.  
+It orchestrates **validation → adaptation → generation**.
 
----
-
-## 🔧 Usage examples
-### Sitemap
+### Sitemap Example
 
 ```php
-use Lemonade\Feed\Domain\Sitemap\SitemapItem;
-use Lemonade\Feed\Infrastructure\Generator\SitemapGenerator;
-use Lemonade\Feed\Infrastructure\IO\Filesystem;
-use Lemonade\Feed\Infrastructure\IO\OutputHeaders;
-use Lemonade\Feed\Infrastructure\IO\StreamFactory;
-use Lemonade\Feed\Validator\FeedValidator;
+use Lemonade\Feed\FeedBuilder;
+use Lemonade\Feed\Domain\{FeedType, Sitemap\SitemapConfig, Sitemap\SitemapLang};
+use Lemonade\Feed\FeedFormat;
+use Lemonade\Feed\Demo\SitemapFixture;
 
-$stream     = StreamFactory::createTempStream();
-$generator  = new SitemapGenerator(false, '/sitemap.xsl', 'cs', new Filesystem(), new OutputHeaders(), $stream);
-$validator  = new FeedValidator();
-
-$items = [
-    (new SitemapItem('https://example.com/'))
-        ->setLastMod(new DateTimeImmutable())
-        ->setChangeFreq('daily')
-        ->setPriority(1.0),
-    new SitemapItem('not-a-url'), // invalid -> skipped
-    (new SitemapItem('https://example.com/about'))
-        ->setChangeFreq('monthly')
-        ->setPriority(0.5),
-];
-
-// Output valid items to browser
-$generator->output(
-    $validator->validateStream($items)
+// prepare config & items
+$config = SitemapConfig::create(
+    withXsl: true,
+    lang: SitemapLang::CS->value,
+    xslHref: '/storage/0/sitemap.xsl'
 );
-```
+$items = SitemapFixture::demo(100);
 
+// build and send to browser
+$builder->build(FeedType::SITEMAP, $config, $items, FeedFormat::XML);
+
+// or save to file
+$builder->save(FeedType::SITEMAP, $config, 'storage/0/sitemap.xml', $items);
+
+// or get as PSR-7 Stream
+$stream = $builder->stream(FeedType::SITEMAP, $config, $items, FeedFormat::JSON);
+```
 
 ### Google Merchant
 
 ```php
-use Lemonade\Feed\Domain\Google\GoogleItem;
-use Lemonade\Feed\Domain\Google\GoogleShipping;
-use Lemonade\Feed\Domain\Google\GoogleImage;
-use Lemonade\Feed\Domain\Google\GoogleProductType;
-use Lemonade\Feed\Infrastructure\Generator\GoogleGenerator;
+use Lemonade\Feed\Domain\Google\GoogleConfig;
+use Lemonade\Feed\Demo\GoogleFixture;
 
-// create generator
-$generator = new GoogleGenerator(
-    'My Shop',
-    'https://example.com',
-    'Google Merchant Feed',
-    new Filesystem(),
-    new OutputHeaders(),
-    $stream
-);
+$config = GoogleConfig::create();
+$items  = GoogleFixture::demo(100);
 
-// one item
-$item = (new GoogleItem(
-    'SKU123',
-    'Super Produkt',
-    'Popis produktu...',
-    'https://example.com/product',
-    199.99,
-    'CZK'
-))
-    ->addShipping(new GoogleShipping('CZ', 'PPL', 89.00, 'CZK'))
-    ->addImage(new GoogleImage('https://example.com/img.jpg'))
-    ->addProductType(new GoogleProductType('Elektronika'))
-    ->setBrand('Lemonade');
-
-// export
-$generator->output([$item]);
+$builder->build(FeedType::GOOGLE, $config, $items);
 ```
 
 ### Zboží.cz
 
 ```php
-use Lemonade\Feed\Domain\Zbozi\ZboziItem;
-use Lemonade\Feed\Domain\Zbozi\ZboziDelivery;
-use Lemonade\Feed\Domain\Zbozi\ZboziImage;
-use Lemonade\Feed\Domain\Zbozi\ZboziParameter;
-use Lemonade\Feed\Infrastructure\Generator\ZboziGenerator;
+use Lemonade\Feed\Domain\Zbozi\ZboziConfig;
+use Lemonade\Feed\Demo\ZboziFixture;
 
-// create generator
-$generator = new ZboziGenerator(
-    new Filesystem(),
-    new OutputHeaders(),
-    $stream
-);
+$config = ZboziConfig::create();
+$items  = ZboziFixture::demo(100);
 
-// one item
-$item = (new ZboziItem('Super Produkt', 'Popis produktu...', 'https://example.com/product', 199.99))
-    ->setItemId('SKU123')
-    ->setDeliveryDate(0)
-    ->addDelivery(new ZboziDelivery('PPL', 89.00))
-    ->addImage(new ZboziImage('https://example.com/img.jpg'))
-    ->addParameter(new ZboziParameter('Barva', 'Černá'))
-    ->setEan('1234567890123')
-    ->setManufacturer('Lemonade');
-
-// export
-$generator->output([$item]);
+$builder->build(FeedType::ZBOZI, $config, $items);
 ```
 
 ### Heureka
 
-
 ```php
-use Lemonade\Feed\Domain\Heureka\HeurekaItem;
-use Lemonade\Feed\Domain\Heureka\HeurekaDelivery;
-use Lemonade\Feed\Domain\Heureka\HeurekaImage;
-use Lemonade\Feed\Domain\Heureka\HeurekaParameter;
-use Lemonade\Feed\Infrastructure\Generator\HeurekaGenerator;
+use Lemonade\Feed\Domain\Heureka\HeurekaConfig;
+use Lemonade\Feed\Demo\HeurekaFixture;
 
-// create generator
-$generator = new HeurekaGenerator(
-    new Filesystem(),
-    new OutputHeaders(),
-    $stream
-);
+$config = HeurekaConfig::create();
+$items  = HeurekaFixture::demo(100);
 
-// one item
-$item = (new HeurekaItem('Super Produkt', 'Popis produktu...', 'https://example.com/product', 199.99))
-    ->setItemId('SKU123')
-    ->setDeliveryDate(0)
-    ->addDelivery(new HeurekaDelivery('PPL', 89.00))
-    ->addImage(new HeurekaImage('https://example.com/img.jpg'))
-    ->addParameter(new HeurekaParameter('Barva', 'Černá'))
-    ->setEan('1234567890123')
-    ->setManufacturer('Lemonade');
-
-// export
-$generator->output([$item]);
+$builder->build(FeedType::HEUREKA, $config, $items);
 ```
 
 ---
-## 🧪 Development & Testing
 
-- PHPStan level 10 (strict)
-- PHPUnit tests in `tests/`
-- Fixtures for demo feeds in `src/Feed/Demo/`
+## 📂 Examples
 
----
+See the [`/examples`](./examples) folder for a working demo:
 
-## 📝 Roadmap
+- [`index.php`](./examples/index.php) – simple router for trying feeds in browser
+- [`bootstrap.php`](./examples/bootstrap.php) – builder & service setup
 
-- [x] Sitemap (with optional XSL + i18n)
-- [x] Google Merchant
-- [x] Zboží.cz
-- [x] Heureka
-- [ ] Pohoda orders/invoices
-- [ ] Money S5 orders
-- [ ] JSON/CSV support
-- [ ] Tests
+Run PHP built-in server:
+
+```bash
+php -S localhost:8000 -t examples
+```
+
+Then open [http://localhost:8000](http://localhost:8000) in your browser.
 
 ---
 
-## 📖 Changelog
-All notable changes are documented in the [CHANGELOG.md](CHANGELOG.md).
+## 🧪 Testing
+
+```bash
+composer test
+```
+
+---
 
 ## 📜 License
-Released under the [MIT License](LICENSE).  
-Copyright © 2025 Jan Mudrák
+
+MIT License © 2025 [LemonadeFramework.cz](https://lemonadeframework.cz/)
