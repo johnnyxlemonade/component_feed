@@ -2,16 +2,17 @@
 
 namespace Lemonade\Feed\Infrastructure\IO;
 
-/**
- * Společný základ pro všechny implementace hlaviček,
- * umožňuje pushnout libovolné vlastní hlavičky.
- */
+use Lemonade\Feed\FeedFormat;
+
 interface OutputHeadersInterface
 {
     public function pushXmlHeaders(): void;
     public function pushJsonHeaders(): void;
+
     /**
      * @param array<string,string> $headers
      */
     public function pushCustomHeaders(array $headers): void;
+
+    public function pushHeadersForFormat(FeedFormat $format): void;
 }

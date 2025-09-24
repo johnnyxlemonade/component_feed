@@ -2,19 +2,22 @@
 
 namespace Lemonade\Feed\Infrastructure\Generator;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter; // Ujistěte se, že je tato třída naimportována!
+use Lemonade\Feed\Domain\Heureka\HeurekaConfig;
 
+/**
+ * @extends AbstractXmlFeedGenerator<HeurekaConfig>
+ */
 final class HeurekaGenerator extends AbstractXmlFeedGenerator
 {
     protected function getRootName(): string
     {
-        return 'SHOP'; // Heureka používá SHOP jako kořenový tag
+        return 'SHOP';
     }
 
     protected function getRootAttributes(): array
     {
         return [
-            'xmlns' => 'http://www.heureka.cz/ns/offer/1.0', // Heureka namespace
+            'xmlns' => 'http://www.heureka.cz/ns/offer/1.0',
         ];
     }
 }

@@ -2,8 +2,11 @@
 
 namespace Lemonade\Feed\Infrastructure\Generator;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
+use Lemonade\Feed\Domain\Zbozi\ZboziConfig;
 
+/**
+ * @extends AbstractXmlFeedGenerator<ZboziConfig>
+ */
 final class ZboziGenerator extends AbstractXmlFeedGenerator
 {
     protected function getRootName(): string

@@ -2,16 +2,22 @@
 
 namespace Lemonade\Feed\Infrastructure\Generator;
 
+use Lemonade\Feed\FeedFormat;
 use Lemonade\Feed\Infrastructure\Json\JsonExportable;
 use Lemonade\Feed\Infrastructure\Json\JsonStreamWriter;
+use Lemonade\Feed\Infrastructure\Adapter\HasDomainItem;
 
 /**
  * Abstrakce pro všechny JSON feed generátory
+ *
+ * @template T of JsonExportable
  */
 abstract class AbstractJsonFeedGenerator extends AbstractFeedGenerator
 {
+    use FeedGeneratorCommon;
+
     /**
-     * Zapíše jen pole itemů jako JSON array [ {...}, {...} ]
+     * Zapíše jen pole itemů jako JSON array
      *
      * @param iterable<JsonExportable> $items
      */
@@ -26,7 +32,7 @@ abstract class AbstractJsonFeedGenerator extends AbstractFeedGenerator
             } catch (\Throwable $e) {
                 $this->getLogger()->logInvalidItem(
                     $item instanceof HasDomainItem ? $item->getDomainItem() : null,
-                    ['exception' => $e->getMessage()]
+                    ['exception' => $e->getMessage()],
                 );
             }
         }
@@ -41,30 +47,13 @@ abstract class AbstractJsonFeedGenerator extends AbstractFeedGenerator
      */
     abstract protected function generateWrapped(iterable $items): void;
 
-    public function save(string $filename, iterable $items): void
+    protected function generate(iterable $items): void
     {
-        $this->resetStream();
         $this->generateWrapped($items);
-
-        $this->getStream()->rewind();
-        $content = $this->getStream()->getContents();
-
-        try {
-            $this->getFilesystem()->write($filename, $content);
-        } catch (\Throwable $e) {
-            $this->getLogger()->logGeneratorError(static::class, $e);
-        }
     }
 
-    public function output(iterable $items): void
+    protected function getContentType(): FeedFormat
     {
-        $this->getHeaders()->pushJsonHeaders();
-
-        $this->resetStream();
-        $this->generateWrapped($items);
-
-        $this->getStream()->rewind();
-        echo $this->getStream()->getContents();
+        return FeedFormat::JSON;
     }
 }
-

@@ -2,14 +2,13 @@
 
 namespace Lemonade\Feed\Infrastructure\Generator;
 
+use Lemonade\Feed\Domain\Zbozi\ZboziConfig;
 use Lemonade\Feed\Infrastructure\Json\JsonExportable;
-use Lemonade\Feed\Infrastructure\IO\FilesystemInterface;
-use Lemonade\Feed\Infrastructure\IO\OutputHeadersInterface;
-use Lemonade\Feed\Logger\FeedLoggerInterface;
-use Psr\Http\Message\StreamInterface;
 
 /**
  * JSON export Zbozi feedu
+ *
+ * @extends AbstractJsonFeedGenerator<ZboziConfig>
  */
 final class ZboziJsonGenerator extends AbstractJsonFeedGenerator
 {
@@ -19,7 +18,7 @@ final class ZboziJsonGenerator extends AbstractJsonFeedGenerator
     protected function generateWrapped(iterable $items): void
     {
         $stream = $this->getStream();
-        $stream->write('{' );
+        $stream->write('{');
         $stream->write('"products":');
         $this->writeItems($items);
         $stream->write('}');

@@ -2,25 +2,23 @@
 
 namespace Lemonade\Feed\Infrastructure\Generator;
 
+use Lemonade\Feed\FeedFormat;
 use Lemonade\Feed\Infrastructure\Adapter\HasDomainItem;
 use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
 use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
 
 /**
  * Abstrakce pro všechny XML feed generátory
+ *
+ * @template T of XmlExportable
  */
 abstract class AbstractXmlFeedGenerator extends AbstractFeedGenerator
 {
-    /**
-     * Název root elementu (např. <urlset>, <SHOP>, <rss>).
-     */
+    use FeedGeneratorCommon;
+
     abstract protected function getRootName(): string;
 
-    /**
-     * Volitelné atributy root elementu (např. xmlns).
-     *
-     * @return array<string,string>
-     */
+    /** @return array<string,string> */
     protected function getRootAttributes(): array
     {
         return [];
@@ -33,7 +31,7 @@ abstract class AbstractXmlFeedGenerator extends AbstractFeedGenerator
     /**
      * @param iterable<XmlExportable> $items
      */
-    public function generate(iterable $items): void
+    protected function generate(iterable $items): void
     {
         $this->resetStream();
 
@@ -60,25 +58,8 @@ abstract class AbstractXmlFeedGenerator extends AbstractFeedGenerator
         $writer->end($this->getRootName());
     }
 
-    public function save(string $filename, iterable $items): void
+    protected function getContentType(): FeedFormat
     {
-        $this->generate($items);
-        $this->getStream()->rewind();
-        $content = $this->getStream()->getContents();
-
-        try {
-            $this->getFilesystem()->write($filename, $content);
-        } catch (\Throwable $e) {
-            $this->getLogger()->logGeneratorError(static::class, $e);
-        }
-    }
-
-    public function output(iterable $items): void
-    {
-        $this->getHeaders()->pushXmlHeaders();
-
-        $this->generate($items);
-        $this->getStream()->rewind();
-        echo $this->getStream()->getContents();
+        return FeedFormat::XML;
     }
 }

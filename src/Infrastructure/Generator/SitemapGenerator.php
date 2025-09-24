@@ -7,15 +7,11 @@ use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
 use Lemonade\Feed\Infrastructure\Xsl\SitemapXsl;
 use Lemonade\Feed\Exception\IOErrorException;
 
+/**
+ * @extends AbstractXmlFeedGenerator<SitemapConfig>
+ */
 final class SitemapGenerator extends AbstractXmlFeedGenerator
 {
-    public function __construct(
-        private readonly SitemapConfig $config,
-                                       ...$deps // filesystem, headers, stream
-    ) {
-        parent::__construct(...$deps);
-    }
-
     protected function getRootName(): string
     {
         return 'urlset';
@@ -30,31 +26,32 @@ final class SitemapGenerator extends AbstractXmlFeedGenerator
 
     protected function beforeRoot(XmlStreamWriter $xml): void
     {
-        if (!$this->config->withXsl() || $this->config->xslHref() === null) {
+        $config = $this->getConfig();
+
+        if (!$config->withXsl() || $config->xslHref() === null) {
             return;
         }
 
-        $href = $this->buildHrefWithLang($this->config->xslHref());
+        $href = $this->buildHrefWithLang($config->xslHref(), $config->lang()->value);
 
         try {
-            $this->storeXsl($href, $this->config->lang()->value);
+            $this->storeXsl($href, $config->lang()->value);
             $this->attachStylesheet($xml, $href);
         } catch (IOErrorException $e) {
             $this->getLogger()->logGeneratorError(static::class, $e);
         }
     }
 
-    private function buildHrefWithLang(string $href): string
+    private function buildHrefWithLang(string $href, string $lang): string
     {
         $href = $this->normalizeHref($href);
 
         $info = pathinfo($href);
-        return $info['dirname'] . '/' . $info['filename'] . '-' . $this->config->lang()->value . '.xsl';
+        return $info['dirname'] . '/' . $info['filename'] . '-' . $lang . '.xsl';
     }
 
     private function storeXsl(string $href, string $lang): void
     {
-        // Tady už necháváme Filesystem házet IOErrorException
         $this->getFilesystem()->write(
             $href,
             SitemapXsl::content($lang)
@@ -63,10 +60,7 @@ final class SitemapGenerator extends AbstractXmlFeedGenerator
 
     private function attachStylesheet(XmlStreamWriter $xml, string $href): void
     {
-        $xml->pi(
-            'xml-stylesheet',
-            sprintf('type="text/xsl" href="%s"', $href)
-        );
+        $xml->pi('xml-stylesheet', sprintf('type="text/xsl" href="%s"', $href));
     }
 
     private function normalizeHref(string $href): string
@@ -74,10 +68,8 @@ final class SitemapGenerator extends AbstractXmlFeedGenerator
         if (str_starts_with($href, 'http')) {
             return $href;
         }
-        
-        $href = ltrim($href, '/');
 
+        $href = ltrim($href, '/');
         return rtrim($href, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
-
 }

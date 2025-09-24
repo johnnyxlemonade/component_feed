@@ -2,6 +2,8 @@
 
 namespace Lemonade\Feed\Infrastructure\IO;
 
+use Lemonade\Feed\FeedFormat;
+
 final class OutputHeaders implements
     XmlOutputHeadersInterface,
     JsonOutputHeadersInterface,
@@ -22,5 +24,13 @@ final class OutputHeaders implements
         foreach ($headers as $name => $value) {
             header($name . ': ' . $value);
         }
+    }
+
+    public function pushHeadersForFormat(FeedFormat $format): void
+    {
+        match ($format) {
+            FeedFormat::XML  => $this->pushXmlHeaders(),
+            FeedFormat::JSON => $this->pushJsonHeaders(),
+        };
     }
 }
