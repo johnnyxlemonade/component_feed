@@ -27,10 +27,18 @@ final class FeedValidator implements FeedValidatorInterface
      */
     public function validateStream(iterable $items): \Generator
     {
+        $index = 0;
+
         foreach ($items as $item) {
+            $index++;
+
             if (!$item instanceof DomainItemInterface) {
                 throw new \InvalidArgumentException(
-                    sprintf('Item %s is not a valid DomainItemInterface', get_class($item))
+                    sprintf(
+                        'Item #%d (%s) is not a valid DomainItemInterface',
+                        $index,
+                        get_class($item)
+                    )
                 );
             }
 
@@ -38,7 +46,13 @@ final class FeedValidator implements FeedValidatorInterface
 
             if (count($violations) > 0) {
                 $errors = array_map(
-                    fn($v) => sprintf('%s: %s', $v->getPropertyPath(), $v->getMessage()),
+                    fn($v) => sprintf(
+                        '[Item #%d] %s: %s (value: %s)',
+                        $index,
+                        $v->getPropertyPath(),
+                        $v->getMessage(),
+                        var_export($v->getInvalidValue(), true)
+                    ),
                     iterator_to_array($violations)
                 );
 
