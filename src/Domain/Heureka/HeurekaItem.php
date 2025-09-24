@@ -3,11 +3,12 @@
 namespace Lemonade\Feed\Domain\Heureka;
 
 use DateTimeInterface;
+use Lemonade\Feed\Domain\DomainItemInterface;
 use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
 use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class HeurekaItem implements XmlExportable
+final class HeurekaItem implements DomainItemInterface
 {
     #[Assert\NotBlank]
     private string $productName;

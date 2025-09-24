@@ -2,11 +2,10 @@
 
 namespace Lemonade\Feed\Domain\Sitemap;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
+use Lemonade\Feed\Domain\DomainItemInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class SitemapItem implements XmlExportable
+final class SitemapItem implements DomainItemInterface
 {
     #[Assert\NotBlank]
     #[Assert\Url]
@@ -25,6 +24,26 @@ final class SitemapItem implements XmlExportable
         $this->loc = $loc;
     }
 
+    public function getLoc(): string
+    {
+        return $this->loc;
+    }
+
+    public function getLastMod(): ?\DateTimeInterface
+    {
+        return $this->lastMod;
+    }
+
+    public function getChangeFreq(): ?string
+    {
+        return $this->changeFreq;
+    }
+
+    public function getPriority(): ?float
+    {
+        return $this->priority;
+    }
+
     public function setLastMod(?\DateTimeInterface $lastMod): self
     {
         $this->lastMod = $lastMod;
@@ -41,17 +60,5 @@ final class SitemapItem implements XmlExportable
     {
         $this->priority = $priority;
         return $this;
-    }
-
-    public function toXml(XmlStreamWriter $xml): void
-    {
-        $xml->start('url');
-
-        $xml->element('loc', $this->loc);
-        $xml->element('lastmod', $this->lastMod?->format('c'));
-        $xml->element('changefreq', $this->changeFreq);
-        $xml->element('priority', $this->priority !== null ? number_format($this->priority, 1) : null);
-
-        $xml->end('url');
     }
 }

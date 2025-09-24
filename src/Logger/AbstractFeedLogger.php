@@ -2,13 +2,13 @@
 
 namespace Lemonade\Feed\Logger;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
+use Lemonade\Feed\Domain\DomainItemInterface;
 use Psr\Log\AbstractLogger;
 use Throwable;
 
 abstract class AbstractFeedLogger extends AbstractLogger implements FeedLoggerInterface
 {
-    public function logInvalidItem(XmlExportable $item, array $errors = []): void
+    public function logInvalidItem(DomainItemInterface $item, array $errors = []): void
     {
         $this->warning('Invalid feed item', [
             'itemClass' => $item::class,

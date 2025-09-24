@@ -2,13 +2,12 @@
 
 namespace Lemonade\Feed\Validator;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-
 interface FeedValidatorInterface
 {
     /**
-     * @param iterable<XmlExportable> $items
-     * @return \Generator<XmlExportable>
+     * @template T of object
+     * @param iterable<T> $items Doménové entity k validaci
+     * @return \Generator<T> Pouze validní entity
      */
     public function validateStream(iterable $items): \Generator;
 }

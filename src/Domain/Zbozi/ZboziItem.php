@@ -2,11 +2,12 @@
 
 namespace Lemonade\Feed\Domain\Zbozi;
 
+use Lemonade\Feed\Domain\DomainItemInterface;
 use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
 use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class ZboziItem implements XmlExportable
+final class ZboziItem implements DomainItemInterface
 {
     #[Assert\NotBlank]
     private string $productName;

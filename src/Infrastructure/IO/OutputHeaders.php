@@ -2,11 +2,19 @@
 
 namespace Lemonade\Feed\Infrastructure\IO;
 
-final class OutputHeaders implements OutputHeadersInterface
+final class OutputHeaders implements
+    XmlOutputHeadersInterface,
+    JsonOutputHeadersInterface,
+    OutputHeadersInterface
 {
     public function pushXmlHeaders(): void
     {
         header('Content-Type: application/xml; charset=UTF-8');
+    }
+
+    public function pushJsonHeaders(): void
+    {
+        header('Content-Type: application/json; charset=UTF-8');
     }
 
     public function pushCustomHeaders(array $headers): void

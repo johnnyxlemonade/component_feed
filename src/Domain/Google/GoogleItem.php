@@ -2,11 +2,10 @@
 
 namespace Lemonade\Feed\Domain\Google;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
+use Lemonade\Feed\Domain\DomainItemInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class GoogleItem implements XmlExportable
+final class GoogleItem implements DomainItemInterface
 {
     #[Assert\NotBlank]
     private string $itemId;
@@ -49,16 +48,23 @@ final class GoogleItem implements XmlExportable
     private ?string $googleProductCategory = null;
     private ?string $itemGroupId = null;
 
-    public function __construct(string $itemId, string $productName, string $description, string $url, float $price, string $currency)
-    {
-        $this->itemId = $itemId;
-        $this->productName = $productName;
-        $this->description = $description;
-        $this->url = $url;
-        $this->price = $price;
-        $this->currency = $currency;
+    public function __construct(
+        string $itemId,
+        string $productName,
+        string $description,
+        string $url,
+        float $price,
+        string $currency
+    ) {
+        $this->itemId       = $itemId;
+        $this->productName  = $productName;
+        $this->description  = $description;
+        $this->url          = $url;
+        $this->price        = $price;
+        $this->currency     = $currency;
     }
 
+    // --- adders ---
     public function addShipping(GoogleShipping $shipping): self
     {
         $this->deliveries[] = $shipping;
@@ -77,7 +83,7 @@ final class GoogleItem implements XmlExportable
         return $this;
     }
 
-    // setters (condition, availability, salePrice, identifierExists, gtin, mpn, brand, availabilityDate, googleProductCategory, itemGroupId)
+    // --- setters ---
     public function setCondition(?string $condition): self { $this->condition = $condition; return $this; }
     public function setAvailability(?string $availability): self { $this->availability = $availability; return $this; }
     public function setSalePrice(?float $salePrice): self { $this->salePrice = $salePrice; return $this; }
@@ -89,41 +95,32 @@ final class GoogleItem implements XmlExportable
     public function setGoogleProductCategory(?string $cat): self { $this->googleProductCategory = $cat; return $this; }
     public function setItemGroupId(?string $id): self { $this->itemGroupId = $id; return $this; }
 
-    public function toXml(XmlStreamWriter $xml): void
-    {
-        $xml->start('item');
+    // --- getters ---
+    public function getId(): string { return $this->itemId; }
+    public function getTitle(): string { return $this->productName; }
+    public function getDescription(): string { return $this->description; }
+    public function getLink(): string { return $this->url; }
+    public function getPrice(): float { return $this->price; }
+    public function getCurrency(): string { return $this->currency; }
 
-        $xml->element('g:id', $this->itemId);
-        $xml->element('title', $this->productName, [], true);
-        $xml->element('description', $this->description, [], true);
-        $xml->element('link', $this->url, [], true);
+    /** @return GoogleShipping[] */
+    public function getShippings(): array { return $this->deliveries; }
 
-        foreach ($this->deliveries as $delivery) {
-            $delivery->toXml($xml);
-        }
+    /** @return GoogleImage[] */
+    public function getImages(): array { return $this->images; }
 
-        foreach ($this->images as $index => $image) {
-            $tag = $index === 0 ? 'g:image_link' : 'g:additional_image_link';
-            $xml->element($tag, $image->getUrl(), [], true);
-        }
+    public function getCondition(): ?string { return $this->condition; }
+    public function getAvailability(): ?string { return $this->availability; }
+    public function getSalePrice(): ?float { return $this->salePrice; }
+    public function getIdentifierExists(): bool { return $this->identifierExists; }
+    public function getGtin(): ?string { return $this->gtin; }
+    public function getMpn(): ?string { return $this->mpn; }
+    public function getBrand(): ?string { return $this->brand; }
 
-        $xml->element('g:condition', $this->condition);
-        $xml->element('g:availability', $this->availability);
-        $xml->element('g:price', sprintf('%.2f %s', $this->price, $this->currency));
-        $xml->element('g:sale_price', $this->salePrice !== null ? sprintf('%.2f %s', $this->salePrice, $this->currency) : null);
-        $xml->element('g:identifier_exists', $this->identifierExists ? 'TRUE' : 'FALSE');
-        $xml->element('g:gtin', $this->gtin);
-        $xml->element('g:mpn', $this->mpn);
-        $xml->element('g:brand', $this->brand);
+    /** @return GoogleProductType[] */
+    public function getProductTypes(): array { return $this->productTypes; }
 
-        foreach ($this->productTypes as $type) {
-            $xml->element('g:product_type', $type->getText());
-        }
-
-        $xml->element('g:availability_date', $this->availabilityDate);
-        $xml->element('g:google_product_category', $this->googleProductCategory);
-        $xml->element('g:item_group_id', $this->itemGroupId);
-
-        $xml->end('item');
-    }
+    public function getAvailabilityDate(): ?string { return $this->availabilityDate; }
+    public function getGoogleProductCategory(): ?string { return $this->googleProductCategory; }
+    public function getItemGroupId(): ?string { return $this->itemGroupId; }
 }

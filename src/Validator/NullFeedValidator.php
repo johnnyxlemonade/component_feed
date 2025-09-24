@@ -11,8 +11,9 @@ use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
 final class NullFeedValidator implements FeedValidatorInterface
 {
     /**
-     * @param iterable<XmlExportable> $items
-     * @return \Generator<XmlExportable>
+     * @template T of object
+     * @param iterable<T> $items
+     * @return \Generator<T>
      */
     public function validateStream(iterable $items): \Generator
     {

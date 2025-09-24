@@ -2,6 +2,7 @@
 
 namespace Lemonade\Feed\Logger;
 
+use Lemonade\Feed\Domain\DomainItemInterface;
 use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
 use Psr\Log\LoggerInterface;
 use Throwable;
@@ -11,7 +12,7 @@ interface FeedLoggerInterface extends LoggerInterface
     /**
      * Zaloguje nevalidní položku feedu
      */
-    public function logInvalidItem(XmlExportable $item, array $errors = []): void;
+    public function logInvalidItem(DomainItemInterface $item, array $errors = []): void;
 
     /**
      * Zaloguje chybu při zápisu XSL souboru

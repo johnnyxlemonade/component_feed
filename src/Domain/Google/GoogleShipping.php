@@ -2,24 +2,38 @@
 
 namespace Lemonade\Feed\Domain\Google;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
+use Symfony\Component\Validator\Constraints as Assert;
 
-final class GoogleShipping implements XmlExportable
+final class GoogleShipping
 {
-    public function __construct(
-        private string $country,
-        private string $service,
-        private float $price,
-        private string $currency
-    ) {}
+    #[Assert\NotBlank]
+    private string $country;
 
-    public function toXml(XmlStreamWriter $xml): void
+    #[Assert\NotBlank]
+    #[Assert\Currency]
+    private string $currency;
+
+    #[Assert\PositiveOrZero]
+    private float $price;
+
+    public function __construct(string $country, string $currency, float $price)
     {
-        $xml->start('g:shipping');
-        $xml->element('g:country', $this->country);
-        $xml->element('g:service', $this->service);
-        $xml->element('g:price', sprintf('%.2f %s', $this->price, $this->currency));
-        $xml->end('g:shipping');
+        $this->country  = $country;
+        $this->currency = $currency;
+        $this->price    = $price;
+    }
+
+    public function getCountry(): string { return $this->country; }
+    public function getCurrency(): string { return $this->currency; }
+    public function getPrice(): float { return $this->price; }
+
+    /** Pomocná metoda pro JSON export */
+    public function toArray(): array
+    {
+        return [
+            'country'  => $this->country,
+            'currency' => $this->currency,
+            'price'    => $this->price,
+        ];
     }
 }
