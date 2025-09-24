@@ -3,8 +3,6 @@
 namespace Lemonade\Feed\Domain\Zbozi;
 
 use Lemonade\Feed\Domain\DomainItemInterface;
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
 use Symfony\Component\Validator\Constraints as Assert;
 
 final class ZboziItem implements DomainItemInterface
@@ -82,25 +80,62 @@ final class ZboziItem implements DomainItemInterface
         return $this;
     }
 
-    public function addCategoryText(ZboziCategoryText $ct): self
+    public function addCategoryText(ZboziCategoryText $categoryText): self
     {
-        $this->categoryTexts[] = $ct;
+        $this->categoryTexts[] = $categoryText;
         return $this;
     }
 
-    public function addExtraMessage(ZboziExtraMessage $em): self
+    public function addExtraMessage(ZboziExtraMessage $extraMessage): self
     {
-        $this->extraMessages[] = $em;
+        $this->extraMessages[] = $extraMessage;
         return $this;
     }
 
-    public function addParameter(ZboziParameter $param): self
+    public function addParameter(ZboziParameter $parameter): self
     {
-        $this->parameters[] = $param;
+        $this->parameters[] = $parameter;
         return $this;
     }
 
-    // --- Jednoduché settery ---
+    // --- Getter methods ---
+    public function getProductName(): string { return $this->productName; }
+    public function getDescription(): string { return $this->description; }
+    public function getUrl(): string { return $this->url; }
+    public function getPriceVat(): float { return $this->priceVat; }
+    public function getDeliveryDate(): ?int { return $this->deliveryDate; }
+    public function getItemId(): ?string { return $this->itemId; }
+    public function getEan(): ?string { return $this->ean; }
+    public function getIsbn(): ?string { return $this->isbn; }
+    public function getProductNo(): ?string { return $this->productNo; }
+    public function getItemGroupId(): ?string { return $this->itemGroupId; }
+    public function getManufacturer(): ?string { return $this->manufacturer; }
+    public function getBrand(): ?string { return $this->brand; }
+    public function getCategoryId(): ?string { return $this->categoryId; }
+    public function getProduct(): ?string { return $this->product; }
+    public function isVisibility(): bool { return $this->visibility; }
+    public function getMaxCpc(): ?float { return $this->maxCpc; }
+    public function getMaxCpcSearch(): ?float { return $this->maxCpcSearch; }
+    public function getProductLine(): ?string { return $this->productLine; }
+    public function getListPrice(): ?float { return $this->listPrice; }
+    public function getReleaseDate(): ?\DateTimeInterface { return $this->releaseDate; }
+
+    /** @return ZboziDelivery[] */
+    public function getDeliveries(): array { return $this->deliveries; }
+
+    /** @return ZboziImage[] */
+    public function getImages(): array { return $this->images; }
+
+    /** @return ZboziCategoryText[] */
+    public function getCategoryTexts(): array { return $this->categoryTexts; }
+
+    /** @return ZboziExtraMessage[] */
+    public function getExtraMessages(): array { return $this->extraMessages; }
+
+    /** @return ZboziParameter[] */
+    public function getParameters(): array { return $this->parameters; }
+
+    // --- Setter methods ---
     public function setItemId(?string $itemId): self { $this->itemId = $itemId; return $this; }
     public function setEan(?string $ean): self { $this->ean = $ean; return $this; }
     public function setIsbn(?string $isbn): self { $this->isbn = $isbn; return $this; }
@@ -117,52 +152,4 @@ final class ZboziItem implements DomainItemInterface
     public function setListPrice(?float $lp): self { $this->listPrice = $lp; return $this; }
     public function setReleaseDate(?\DateTimeInterface $rd): self { $this->releaseDate = $rd; return $this; }
     public function setDeliveryDate(?int $dd): self { $this->deliveryDate = $dd; return $this; }
-
-    // --- XML export ---
-    public function toXml(XmlStreamWriter $xml): void
-    {
-        $xml->start('SHOPITEM');
-        $xml->element('PRODUCTNAME', $this->productName);
-        $xml->element('DESCRIPTION', $this->description, [], true);
-        $xml->element('URL', $this->url);
-        $xml->element('PRICE_VAT', (string)$this->priceVat);
-        $xml->element('DELIVERY_DATE', $this->deliveryDate !== null ? (string)$this->deliveryDate : null);
-
-        foreach ($this->deliveries as $d) { $d->toXml($xml); }
-        $xml->element('ITEM_ID', $this->itemId);
-
-        foreach ($this->images as $img) {
-            $xml->element('IMGURL', $img->getUrl());
-        }
-
-        $xml->element('EAN', $this->ean);
-        $xml->element('ISBN', $this->isbn);
-        $xml->element('PRODUCTNO', $this->productNo);
-        $xml->element('ITEMGROUP_ID', $this->itemGroupId);
-        $xml->element('MANUFACTURER', $this->manufacturer);
-        $xml->element('BRAND', $this->brand);
-        $xml->element('CATEGORY_ID', $this->categoryId);
-
-        foreach ($this->categoryTexts as $ct) {
-            $xml->element('CATEGORYTEXT', $ct->getText());
-        }
-
-        $xml->element('PRODUCT', $this->product);
-
-        foreach ($this->extraMessages as $em) {
-            $xml->element('EXTRA_MESSAGE', $em->getType());
-        }
-
-        $xml->element('VISIBILITY', $this->visibility ? '1' : '0');
-        $xml->element('MAX_CPC', $this->maxCpc !== null ? (string)$this->maxCpc : null);
-        $xml->element('MAX_CPC_SEARCH', $this->maxCpcSearch !== null ? (string)$this->maxCpcSearch : null);
-
-        foreach ($this->parameters as $p) { $p->toXml($xml); }
-
-        $xml->element('PRODUCT_LINE', $this->productLine);
-        $xml->element('LIST_PRICE', $this->listPrice !== null ? (string)$this->listPrice : null);
-        $xml->element('RELEASE_DATE', $this->releaseDate?->format('c'));
-
-        $xml->end('SHOPITEM');
-    }
 }

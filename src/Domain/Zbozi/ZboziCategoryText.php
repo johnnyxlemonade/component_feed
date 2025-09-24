@@ -2,24 +2,23 @@
 
 namespace Lemonade\Feed\Domain\Zbozi;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
-
-final class ZboziCategoryText implements XmlExportable
+final class ZboziCategoryText
 {
     public function __construct(
         private readonly string $text
     ) {}
 
+    // Getter pro text
     public function getText(): string
     {
         return $this->text;
     }
 
-    public function toXml(XmlStreamWriter $xml): void
+    // JSON export
+    public function toArray(): array
     {
-        if ($this->text !== '') {
-            $xml->element('CATEGORYTEXT', $this->text);
-        }
+        return [
+            'text' => $this->text,
+        ];
     }
 }

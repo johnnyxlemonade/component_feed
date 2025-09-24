@@ -57,7 +57,7 @@ final class GoogleItemXmlAdapter implements XmlExportable, HasDomainItem
             );
         }
 
-        // 🔑 tady je ta oprava – správný getter
+        //  identifier_exists
         $xml->element('g:identifier_exists', $this->item->getIdentifierExists() ? 'TRUE' : 'FALSE');
 
         $xml->element('g:gtin', $this->item->getGtin());

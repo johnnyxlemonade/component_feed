@@ -17,14 +17,4 @@ final class ZboziGenerator extends AbstractXmlFeedGenerator
             'xmlns' => 'http://www.zbozi.cz/ns/offer/1.0',
         ];
     }
-
-    protected function beforeItems(XmlStreamWriter $xml): void
-    {
-        // tady u Zbozi není nic speciálního před <SHOPITEM>
-    }
-
-    protected function afterItems(XmlStreamWriter $xml): void
-    {
-        // tady taky nic
-    }
 }

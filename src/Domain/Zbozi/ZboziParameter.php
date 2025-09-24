@@ -2,23 +2,45 @@
 
 namespace Lemonade\Feed\Domain\Zbozi;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
-
-final class ZboziParameter implements XmlExportable
+final class ZboziParameter
 {
-    public function __construct(
-        private readonly string $name,
-        private readonly string $value,
-        private readonly ?string $unit = null,
-    ) {}
+    private string $name;
+    private string $value;
+    private ?string $unit;
 
-    public function toXml(XmlStreamWriter $xml): void
+    public function __construct(
+        string $name,
+        string $value,
+        ?string $unit = null
+    ) {
+        $this->name = $name;
+        $this->value = $value;
+        $this->unit = $unit;
+    }
+
+    // Getter metody pro vlastnosti
+    public function getName(): string
     {
-        $xml->start('PARAM');
-        $xml->element('PARAM_NAME', $this->name);
-        $xml->element('VAL', $this->value);
-        $xml->element('UNIT', $this->unit);
-        $xml->end('PARAM');
+        return $this->name;
+    }
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    public function getUnit(): ?string
+    {
+        return $this->unit;
+    }
+
+    // Pomocná metoda pro JSON export
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->name,
+            'value' => $this->value,
+            'unit'  => $this->unit,
+        ];
     }
 }

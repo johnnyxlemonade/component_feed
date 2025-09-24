@@ -2,23 +2,42 @@
 
 namespace Lemonade\Feed\Domain\Zbozi;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
+use Symfony\Component\Validator\Constraints as Assert;
 
-final class ZboziDelivery implements XmlExportable
+final class ZboziDelivery
 {
-    public function __construct(
-        private readonly string $id,
-        private readonly float $price,
-        private readonly ?float $priceCod = null,
-    ) {}
+    #[Assert\NotBlank]
+    private string $id;
 
-    public function toXml(XmlStreamWriter $xml): void
+    #[Assert\NotBlank]
+    #[Assert\PositiveOrZero]
+    private float $price;
+
+    #[Assert\PositiveOrZero]
+    private ?float $priceCod;
+
+    public function __construct(
+        string $id,
+        float $price,
+        ?float $priceCod = null
+    ) {
+        $this->id = $id;
+        $this->price = $price;
+        $this->priceCod = $priceCod;
+    }
+
+    // Gettery pro jednotlivé vlastnosti
+    public function getId(): string { return $this->id; }
+    public function getPrice(): float { return $this->price; }
+    public function getPriceCod(): ?float { return $this->priceCod; }
+
+    // Převod na pole pro JSON export
+    public function toArray(): array
     {
-        $xml->start('DELIVERY');
-        $xml->element('DELIVERY_ID', $this->id);
-        $xml->element('DELIVERY_PRICE', (string) $this->price);
-        $xml->element('DELIVERY_PRICE_COD', $this->priceCod !== null ? (string) $this->priceCod : null);
-        $xml->end('DELIVERY');
+        return [
+            'id' => $this->id,
+            'price' => $this->price,
+            'priceCod' => $this->priceCod,
+        ];
     }
 }

@@ -2,13 +2,11 @@
 
 namespace Lemonade\Feed\Domain\Heureka;
 
-use DateTimeInterface;
 use Lemonade\Feed\Domain\DomainItemInterface;
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
+use Lemonade\Feed\Infrastructure\Json\JsonExportable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class HeurekaItem implements DomainItemInterface
+final class HeurekaItem implements DomainItemInterface, JsonExportable
 {
     #[Assert\NotBlank]
     private string $productName;
@@ -66,44 +64,49 @@ final class HeurekaItem implements DomainItemInterface
     public function addCategoryText(HeurekaCategoryText $ct): self { $this->categoryTexts[] = $ct; return $this; }
     public function addParameter(HeurekaParameter $p): self { $this->parameters[] = $p; return $this; }
 
-    // --- XML export ---
-    public function toXml(XmlStreamWriter $xml): void
+    // --- Getter methods for missing properties ---
+    public function getProductName(): string { return $this->productName; }
+    public function getDescription(): string { return $this->description; }
+    public function getUrl(): string { return $this->url; }
+    public function getPriceVat(): float { return $this->priceVat; }
+    public function getDeliveryDate(): ?int { return $this->deliveryDate; }
+    public function getItemId(): ?string { return $this->itemId; }
+    public function getEan(): ?string { return $this->ean; }
+    public function getIsbn(): ?string { return $this->isbn; }
+    public function getItemGroupId(): ?string { return $this->itemGroupId; }
+    public function getManufacturer(): ?string { return $this->manufacturer; }
+    public function getCategoryTexts(): array { return $this->categoryTexts; }
+    public function getParameters(): array { return $this->parameters; }
+    /** @return HeurekaImage[] */
+    public function getImages(): array { return $this->images; }
+
+    // --- JSON export ---
+    public function toJson(): array
     {
-        $xml->start('SHOPITEM');
+        return [
+            'productName'     => $this->productName,
+            'description'     => $this->description,
+            'url'             => $this->url,
+            'priceVat'        => number_format($this->priceVat, 2, '.', ''), // Převod na string s 2 desetinnými místy
+            'itemId'          => $this->itemId,
+            'ean'             => $this->ean,
+            'isbn'            => $this->isbn,
+            'itemGroupId'     => $this->itemGroupId,
+            'manufacturer'    => $this->manufacturer,
+            'visibility'      => $this->isVisibility() ? 1 : 0, // Převod na 1/0 pro bool
+            'images'          => array_map(fn($image) => $image->getUrl(), $this->images),
+            'categoryTexts'   => array_map(fn($ct) => $ct->getText(), $this->categoryTexts),
+            'parameters'      => array_map(fn($p) => [
+                'name'  => $p->getName(),
+                'value' => $p->getValue()
+            ], $this->parameters),
+            'deliveryDate'    => $this->deliveryDate !== null ? (string) $this->deliveryDate : null,
+        ];
+    }
 
-        $xml->element('PRODUCTNAME', $this->productName);
-        $xml->element('DESCRIPTION', $this->description, [], true); // CDATA
-        $xml->element('URL', $this->url);
-        $xml->element('PRICE_VAT', (string)$this->priceVat);
-        $xml->element('DELIVERY_DATE', $this->deliveryDate !== null ? (string)$this->deliveryDate : null);
-
-        foreach ($this->deliveries as $delivery) {
-            $delivery->toXml($xml);
-        }
-
-        $xml->element('ITEM_ID', $this->itemId);
-
-        foreach ($this->images as $index => $image) {
-            $tag = $index === 0 ? 'IMGURL' : 'IMGURL_ALTERNATIVE';
-            $xml->element($tag, $image->getUrl());
-        }
-
-        $xml->element('EAN', $this->ean);
-        $xml->element('ISBN', $this->isbn);
-        $xml->element('ITEMGROUP_ID', $this->itemGroupId);
-        $xml->element('MANUFACTURER', $this->manufacturer);
-
-        foreach ($this->categoryTexts as $ct) {
-            $xml->element('CATEGORYTEXT', $ct->getText());
-        }
-
-        foreach ($this->parameters as $p) {
-            $xml->start('PARAM');
-            $xml->element('PARAM_NAME', $p->getName());
-            $xml->element('VAL', $p->getValue());
-            $xml->end('PARAM');
-        }
-
-        $xml->end('SHOPITEM');
+    // --- Visibility check ---
+    public function isVisibility(): bool
+    {
+        return !empty($this->productName) && $this->priceVat > 0; // Kontrola, zda je produkt viditelný (název a cena musí být platné)
     }
 }

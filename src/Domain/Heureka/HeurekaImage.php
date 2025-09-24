@@ -12,4 +12,12 @@ final class HeurekaImage
     {
         return $this->url;
     }
+
+    // Pomocná metoda pro JSON export
+    public function toArray(): array
+    {
+        return [
+            'url' => $this->url,
+        ];
+    }
 }

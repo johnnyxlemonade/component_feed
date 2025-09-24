@@ -2,22 +2,26 @@
 
 namespace Lemonade\Feed\Domain\Zbozi;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
-
-final class ZboziExtraMessage implements XmlExportable
+final class ZboziExtraMessage
 {
-    public function __construct(
-        private readonly string $type
-    ) {}
+    private string $type;
 
+    public function __construct(string $type)
+    {
+        $this->type = $type;
+    }
+
+    // Getter pro type
     public function getType(): string
     {
         return $this->type;
     }
 
-    public function toXml(XmlStreamWriter $xml): void
+    // Pomocná metoda pro JSON export
+    public function toArray(): array
     {
-        $xml->element('EXTRA_MESSAGE', $this->type);
+        return [
+            'type' => $this->type,
+        ];
     }
 }

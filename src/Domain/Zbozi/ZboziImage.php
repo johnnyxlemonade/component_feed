@@ -2,22 +2,25 @@
 
 namespace Lemonade\Feed\Domain\Zbozi;
 
-use Lemonade\Feed\Infrastructure\Xml\XmlExportable;
-use Lemonade\Feed\Infrastructure\Xml\XmlStreamWriter;
-
-final class ZboziImage implements XmlExportable
+final class ZboziImage
 {
-    public function __construct(
-        private readonly string $url
-    ) {}
+    private string $url;
+
+    public function __construct(string $url)
+    {
+        $this->url = $url;
+    }
 
     public function getUrl(): string
     {
         return $this->url;
     }
 
-    public function toXml(XmlStreamWriter $xml): void
+    // Pomocná metoda pro JSON export
+    public function toArray(): array
     {
-        $xml->element('IMGURL', $this->url);
+        return [
+            'url' => $this->url,
+        ];
     }
 }

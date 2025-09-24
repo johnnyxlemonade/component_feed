@@ -12,4 +12,12 @@ final class HeurekaCategoryText
     {
         return $this->text;
     }
+
+    // JSON export
+    public function toArray(): array
+    {
+        return [
+            'text' => $this->text,
+        ];
+    }
 }

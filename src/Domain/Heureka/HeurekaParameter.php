@@ -6,7 +6,8 @@ final class HeurekaParameter
 {
     public function __construct(
         private readonly string $name,
-        private readonly string $value
+        private readonly string $value,
+        private ?string $unit = null
     ) {}
 
     public function getName(): string
@@ -17,5 +18,20 @@ final class HeurekaParameter
     public function getValue(): string
     {
         return $this->value;
+    }
+
+    public function getUnit(): ?string
+    {
+        return $this->unit;
+    }
+
+    // Pomocná metoda pro JSON export
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->name,
+            'value' => $this->value,
+            'unit'  => $this->unit,
+        ];
     }
 }

@@ -29,7 +29,7 @@ final class HeurekaFixture
                 ->setDeliveryDate(rand(0, 5));
 
             $item->addDelivery(new HeurekaDelivery("personal_pickup", 0.0, null));
-            $item->addDelivery(new HeurekaDelivery("czech_post", 89.0, 120.0));
+            $item->addDelivery(new HeurekaDelivery("czech_post", 89.0, null));
 
             $item->addImage(new HeurekaImage("https://example.com/images/$i.jpg"));
             $item->addImage(new HeurekaImage("https://example.com/images/$i-alt.jpg"));
