@@ -31,7 +31,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Lemonade\\Feed\\": "src/Feed/"
+      "Lemonade\\Feed\\": "src/"
     }
   },
   "autoload-dev": {
