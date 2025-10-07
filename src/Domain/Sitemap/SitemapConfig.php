@@ -8,36 +8,18 @@ use Lemonade\Feed\Domain\FeedType;
 final class SitemapConfig implements FeedConfigInterface
 {
     public function __construct(
-        private readonly bool $withXsl,
         private readonly SitemapLang $lang,
-        private readonly ?string $xslHref = null,
+        private readonly bool $createXsl = false
     ) {}
 
-    public function withXsl(): bool
+    public function hasXsl(): bool
     {
-        return $this->withXsl;
+        return $this->createXsl;
     }
 
     public function lang(): SitemapLang
     {
         return $this->lang;
-    }
-
-    public function xslHref(): ?string
-    {
-        return $this->xslHref;
-    }
-
-    public static function create(
-        bool $withXsl = false,
-        ?string $lang = null,
-        ?string $xslHref = null,
-    ): self {
-        return new self(
-            $withXsl,
-            SitemapLang::tryFrom($lang) ?? SitemapLang::CS,
-            $xslHref
-        );
     }
 
     public function feedType(): FeedType

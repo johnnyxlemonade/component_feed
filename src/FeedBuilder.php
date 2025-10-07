@@ -13,15 +13,14 @@ use Psr\Http\Message\StreamInterface;
 final class FeedBuilder
 {
     private GeneratorFactory $generatorFactory;
-    private AdapterFactory $adapterFactory;
 
     public function __construct(
-        FilesystemInterface $filesystem,
-        OutputHeadersInterface $outputHeaders,
-        StreamInterface $stream,
-        FeedLoggerInterface $logger,
+        private readonly FilesystemInterface $filesystem,
+        private readonly OutputHeadersInterface $outputHeaders,
+        private readonly StreamInterface $stream,
+        private readonly FeedLoggerInterface $logger,
         private readonly FeedValidatorInterface $validator,
-        ?AdapterFactory $adapterFactory = null
+        private readonly AdapterFactory $adapterFactory
     ) {
         $this->generatorFactory = new GeneratorFactory(
             $filesystem,
@@ -29,9 +28,20 @@ final class FeedBuilder
             $stream,
             $logger
         );
-        $this->adapterFactory = $adapterFactory ?? new AdapterFactory();
     }
 
+    // --- Gettery pro interní služby ---
+    public function getFilesystem(): FilesystemInterface
+    {
+        return $this->filesystem;
+    }
+
+    public function getLogger(): FeedLoggerInterface
+    {
+        return $this->logger;
+    }
+
+    // --- API ---
     public function build(
         FeedType $type,
         FeedConfigInterface $config,
@@ -63,6 +73,7 @@ final class FeedBuilder
             ->toStream($this->adaptItems($items, $format));
     }
 
+    // --- Interní pomocné metody ---
     private function adaptItems(iterable $items, FeedFormat $format): iterable
     {
         foreach ($this->validator->validateStream($items) as $item) {

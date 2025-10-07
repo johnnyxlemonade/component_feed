@@ -12,6 +12,11 @@ final class Filesystem implements FilesystemInterface
         private readonly FeedLoggerInterface $logger
     ) {}
 
+    public function getBasePath(): string
+    {
+        return $this->basePath;
+    }
+
     public function resolvePath(string $path): string
     {
         if ($this->isAbsolute($path)) {
@@ -32,7 +37,7 @@ final class Filesystem implements FilesystemInterface
         return (bool) preg_match('~^(?:[A-Z]:[\\\\/]|/|\\\\\\\\)~i', $path);
     }
 
-    public function mkdir(string $dir, int $mode = 0777): void
+    public function mkdir(string $dir, int $mode = 0755): void
     {
         $dir = $this->resolvePath($dir);
 
