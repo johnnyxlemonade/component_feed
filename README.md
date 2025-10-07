@@ -38,11 +38,7 @@ use Lemonade\Feed\FeedFormat;
 use Lemonade\Feed\Demo\SitemapFixture;
 
 // prepare config & items
-$config = SitemapConfig::create(
-    withXsl: true,
-    lang: SitemapLang::CS->value,
-    xslHref: '/storage/0/sitemap.xsl'
-);
+$config = new SitemapConfig(lang: SitemapLang::CS, createXsl: true);
 $items = SitemapFixture::demo(100);
 
 // build and send to browser
